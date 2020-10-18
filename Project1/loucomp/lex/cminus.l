@@ -26,7 +26,6 @@ whitespace  [ \t]+
 "else"          {return ELSE;}
 "while"         {return WHILE;}
 "return"        {return RETURN;}
-"return"        {return RETURN;}
 "int"           {return INT;}
 "void"          {return VOID;}
 "then"          {return THEN;}
@@ -42,6 +41,10 @@ whitespace  [ \t]+
 "<="            {return LE;}
 ">"             {return GT;}
 ">="            {return GE;}
+"+"             {return PLUS;}
+"-"             {return MINUS;}
+"*"             {return TIMES;}
+"/"             {return OVER;}
 "("             {return LPAREN;}
 ")"             {return RPAREN;}
 "["             {return LBRACE;}
@@ -50,10 +53,6 @@ whitespace  [ \t]+
 "}"             {return RCURLY;}
 ";"             {return SEMI;}
 ","             {return COMMA;}
-"+"             {return PLUS;}
-"-"             {return MINUS;}
-"*"             {return TIMES;}
-"/"             {return OVER;}
 {number}        {return NUM;}
 {identifier}    {return ID;}
 {newline}       {lineno++;}
