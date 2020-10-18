@@ -14,7 +14,10 @@
  */
 void printToken( TokenType token, const char* tokenString )
 { switch (token)
-  { case IF:
+  { 
+    /* 10.18 수정*/
+    /*
+    case IF:
     case THEN:
     case ELSE:
     case END:
@@ -25,6 +28,21 @@ void printToken( TokenType token, const char* tokenString )
       fprintf(listing,
          "reserved word: %s\n",tokenString);
       break;
+    */
+
+    case IF: fprintf(listing,"reserved word: %s\n",tokenString); break;
+    case ELSE: fprintf(listing,"reserved word: %s\n",tokenString); break;
+    case WHILE: fprintf(listing,"reserved word: %s\n",tokenString); break;
+    case RETURN: fprintf(listing,"reserved word: %s\n",tokenString); break;
+    case INT: fprintf(listing,"reserved word: %s\n",tokenString); break;
+    case VOID: fprintf(listing,"reserved word: %s\n",tokenString); break;
+    case THEN: fprintf(listing,"reserved word: %s\n",tokenString); break;
+    case END: fprintf(listing,"reserved word: %s\n",tokenString); break;
+    case REPEAT: fprintf(listing,"reserved word: %s\n",tokenString); break;
+    case UNTIL: fprintf(listing,"reserved word: %s\n",tokenString); break;
+    case READ: fprintf(listing,"reserved word: %s\n",tokenString); break;
+    case WRITE: fprintf(listing,"reserved word: %s\n",tokenString); break;
+
 
     /* 10.18 수정*/
     /*
