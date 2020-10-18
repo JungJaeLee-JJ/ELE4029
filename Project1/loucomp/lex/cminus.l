@@ -65,7 +65,6 @@ whitespace  [ \t]+
                     if (c == '\n') lineno++;
                     if(flag==1 && c =='/') break;
                     if (c == '*') flag = 1;
-                    else flag = 0;
                   } while (c != EOF);
                 }
 .               {return ERROR;}
