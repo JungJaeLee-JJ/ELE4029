@@ -57,9 +57,13 @@ whitespace  [ \t]+
 {identifier}    {return ID;}
 {newline}       {lineno++;}
 {whitespace}    {/* skip whitespace */}
-"{"             { char c;
+"/*"            { char c;
+                  int flag = 0;
                   do
                   { c = input();
+                    if(flag==1 && c =='/') break;
+                    if (c == '*') flag = 1;
+                    else flag = 0;
                     if (c == EOF) break;
                     if (c == '\n') lineno++;
                   } while (c != '}');
