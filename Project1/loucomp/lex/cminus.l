@@ -61,11 +61,11 @@ whitespace  [ \t]+
                   int flag = 0;
                   do
                   { c = input();
+                    if (c == EOF) break;
+                    if (c == '\n') lineno++;
                     if(flag==1 && c =='/') break;
                     if (c == '*') flag = 1;
                     else flag = 0;
-                    if (c == EOF) break;
-                    if (c == '\n') lineno++;
                   } while (c != EOF);
                 }
 .               {return ERROR;}
