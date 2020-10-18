@@ -268,6 +268,7 @@ TokenType getToken(void)
    }
    if (TraceScan) {
      fprintf(listing,"\t%d: ",lineno);
+     fprintf(listing,"\t%d: ",lineno);
      printToken(currentToken,tokenString);
    }
    return currentToken;
