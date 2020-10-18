@@ -101,15 +101,13 @@ TokenType getToken(void)
            state = INNUM;
          else if (isalpha(c))
            state = INID;
-         /* 10.18 수정*/
-         /*else if (c == ':')
-           state = INASSIGN;*/
          else if ((c == ' ') || (c == '\t') || (c == '\n'))
            save = FALSE;
-         else if (c == '{')
-         { save = FALSE;
-           state = INCOMMENT;
-         }
+         else if (c == '<') state = INLT;
+         else if (c == '>') state = INGT;
+         else if (c == '=') state = INEQ;
+         else if (c == '!') state = INNE;
+         else if (c == '/'){ save = FALSE; state = INOVER; }
          else
          { state = DONE;
            switch (c)
@@ -132,36 +130,29 @@ TokenType getToken(void)
              case '*':
                currentToken = TIMES;
                break;
-              /* 10.18 수정*/
-              /*
-             case '/':
-               currentToken = OVER;
-               break;
-               */
              case '(':
                currentToken = LPAREN;
                break;
              case ')':
                currentToken = RPAREN;
                break;
-
-             /* 10.18 수정*/
              case '{':
-                currentToken = LCURLY;
-                break;
+               currentToken = LCURLY;
+               break;
              case '}':
-                currentToken = RCURLY;
-                break;
+               currentToken = RCURLY;
+               break;
              case '[':
-                currentToken = LBRACE;
-                break;
+               currentToken = LBRACE;
+               break;
              case ']':
-                currentToken = RBRACE;
-                break;
-              /* 10.18 수정*/
-
+               currentToken = RBRACE;
+               break;
              case ';':
                currentToken = SEMI;
+               break;
+             case ',':
+               currentToken = COMMA;
                break;
              default:
                currentToken = ERROR;
@@ -169,28 +160,79 @@ TokenType getToken(void)
            }
          }
          break;
+       case INOVER:
+        // /* */ 처리
+        if (c == '*')
+        {
+          state = INCOMMENT;
+          save = FALSE;
+        }
+        else
+        {
+          // /일때 * 가 아니라면 OVER
+          state = DONE;
+          ungetNextChar();
+          currentToken = OVER;
+        }
+        break;
        case INCOMMENT:
          save = FALSE;
          if (c == EOF)
          { state = DONE;
            currentToken = ENDFILE;
          }
-         else if (c == '}') state = START;
+         /* INCOMMENT_ 는 INCOMMENT 상태에서 *가 나왔을때 */
+         else if (c == '*') state = INCOMMENT_;
          break;
-        /* 10.18 수정*/
-        /*
-       case INASSIGN:
+      case INCOMMENT_:
+         save = FALSE;
+         if(c == EOF)
+         {
+           state = DONE;
+           currentToken = ENDFILE;
+         }
+         /* INCOMMENT_ 에서 /들어오면 주석 끝, 아니면 주석 계속 */
+         else if (c == '/') state = START;
+         else state = INCOMMENT;
+         break;
+       case INLT:
          state = DONE;
-         if (c == '=')
-           currentToken = ASSIGN;
+         if(c == '=') currentToken = LE;
          else
-         { 
+         {
+           ungetNextChar();
+           currentToken = LT;
+         }
+         break;
+       case INGT:
+         state = DONE;
+         if(c == '=') currentToken = GE;
+         else
+         {
+           ungetNextChar();
+           currentToken = GT;
+         }
+         break;
+       case INEQ:
+         state = DONE;
+         if(c == '=') currentToken = EQ;
+         else
+         {
+           ungetNextChar();
+           currentToken = ASSIGN;
+         }
+         break;
+       case INNE:
+         state = DONE;
+         if(c == '=') currentToken = NE;
+         else
+         {
            ungetNextChar();
            save = FALSE;
            currentToken = ERROR;
          }
          break;
-        */
+
        case INNUM:
          if (!isdigit(c))
          { /* backup in the input */
@@ -230,4 +272,3 @@ TokenType getToken(void)
    }
    return currentToken;
 } /* end getToken */
-
