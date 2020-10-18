@@ -16,9 +16,9 @@ scanner_cimpl: $(OBJS)
 scanner_flex: $(OBJS_FLEX)
 	$(CC) $(CFLAGS) $(OBJS_FLEX) -o $@ -lfl
 
-lex.yy.o: cminus.l
+lex.yy.o: cminus.l scan.h util.h globals.h
 	flex $^
-	$(CC) $(CFLAGS) -c lex.yy.c
+	$(CC) $(CFLAGS) -c lex.yy.c -lfl
 
 main.o: main.c globals.h util.h scan.h parse.h analyze.h cgen.h
 	$(CC) $(CFLAGS) -c main.c
