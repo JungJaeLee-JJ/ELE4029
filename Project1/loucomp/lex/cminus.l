@@ -52,6 +52,7 @@ whitespace  [ \t]+
 "+"             {return PLUS;}
 "-"             {return MINUS;}
 "*"             {return TIMES;}
+"/"             {return OVER;}
 {number}        {return NUM;}
 {identifier}    {return ID;}
 {newline}       {lineno++;}
