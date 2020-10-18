@@ -1,0 +1,42 @@
+
+TINY COMPILATION: ../test/test.2.txt
+   1: void main(void)
+	1: Unknown token: 7
+	1: ID, name= main
+	1: (
+	1: Unknown token: 7
+	1: )
+   2: {
+   3: 	int i; int x[5];
+   4: 	
+   5: 	i = 0;
+   6: 	while( i < 5 )
+   7: 	{
+   8: 		x[i] = input();
+   9: 
+  10: 		i = i + 1;
+  11: 	}
+  12: 
+  13: 	i = 0;
+	13: ID, name= i
+	13: ==
+	13: NUM, val= 0
+	13: ;
+  14: 	while( i <= 4 )
+	14: Unknown token: 4
+	14: (
+	14: ID, name= i
+	14: <
+	14: ==
+	14: NUM, val= 4
+	14: )
+  15: 	{
+  16: 		if( x[i] != 0 )
+  17: 		{
+  18: 			output(x[i]);
+  19: 		}
+  20: 	}
+	20: }
+  21: }
+	21: }
+	22: EOF

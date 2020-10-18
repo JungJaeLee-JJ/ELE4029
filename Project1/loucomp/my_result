@@ -1,0 +1,48 @@
+
+TINY COMPILATION: ../test/test.1.txt
+   1: /* A program to perform Euclid's
+	1: ERROR: /
+	1: *
+	1: ID, name= A
+	1: ID, name= program
+	1: ID, name= to
+	1: ID, name= perform
+	1: ID, name= Euclid
+	1: ERROR: '
+	1: ID, name= s
+   2:    Algorithm to computer gcd */
+	2: ID, name= Algorithm
+	2: ID, name= to
+	2: ID, name= computer
+	2: ID, name= gcd
+	2: *
+	2: ERROR: /
+   3: 
+   4: int gcd (int u, int v)
+	4: Unknown token: 6
+	4: ID, name= gcd
+	4: (
+	4: Unknown token: 6
+	4: ID, name= u
+	4: ERROR: ,
+	4: Unknown token: 6
+	4: ID, name= v
+	4: )
+   5: {
+   6: 	if (v == 0) return u;
+   7: 	else return gcd(v,u-u/v*v);
+   8: 	/* u-u/v*v == u mod v */
+   9: }
+  10: 
+  11: void main(void)
+	11: Unknown token: 7
+	11: ID, name= main
+	11: (
+	11: Unknown token: 7
+	11: )
+  12: {
+  13: 	int x; int y;
+  14: 	x = input(); y = input();
+  15: 	output(gcd(x,y));
+  16: }
+	17: EOF
