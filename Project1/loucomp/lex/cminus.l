@@ -66,7 +66,7 @@ whitespace  [ \t]+
                     else flag = 0;
                     if (c == EOF) break;
                     if (c == '\n') lineno++;
-                  } while (c != '}');
+                  } while (c != EOF);
                 }
 .               {return ERROR;}
 
