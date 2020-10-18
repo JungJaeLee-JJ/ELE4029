@@ -43,16 +43,6 @@ whitespace  [ \t]+
 ">="            {return GE;}
 "+"             {return PLUS;}
 "-"             {return MINUS;}
-"/*"            { char c;
-                  int flag = 0;
-                  do
-                  { c = input();
-                    if (c == EOF) break;
-                    if (c == '\n') lineno++;
-                    if(flag==1 && c =='/') break;
-                    if (c == '*') flag = 1;
-                  } while (c != EOF);
-                }
 "*"             {return TIMES;}
 "/"             {return OVER;}
 "("             {return LPAREN;}
@@ -67,6 +57,16 @@ whitespace  [ \t]+
 {identifier}    {return ID;}
 {newline}       {lineno++;}
 {whitespace}    {/* skip whitespace */}
+"/*"            { char c;
+                  int flag = 0;
+                  do
+                  { c = input();
+                    if (c == EOF) break;
+                    if (c == '\n') lineno++;
+                    if (flag==1 && c =='/') break;
+                    if (c == '*') flag = 1;
+                  } while (c != EOF);
+                }
 .               {return ERROR;}
 
 %%
