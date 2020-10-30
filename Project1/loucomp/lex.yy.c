@@ -988,20 +988,21 @@ YY_RULE_SETUP
                     if (c == '\n') lineno++;
                     if (flag==1 && c =='/') break;
                     if (c == '*') flag = 1;
-                  } while (c != EOF);
+                    else flag = 0;
+                  } while (1);
                 }
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 70 "cminus.l"
+#line 71 "cminus.l"
 {return ERROR;}
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 72 "cminus.l"
+#line 73 "cminus.l"
 ECHO;
 	YY_BREAK
-#line 1005 "lex.yy.c"
+#line 1006 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2002,7 +2003,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 72 "cminus.l"
+#line 73 "cminus.l"
 
 
 
