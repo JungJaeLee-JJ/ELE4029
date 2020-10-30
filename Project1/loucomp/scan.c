@@ -193,6 +193,7 @@ TokenType getToken(void)
          }
          /* INCOMMENT_ 에서 /들어오면 주석 끝, 아니면 주석 계속 */
          else if (c == '/') state = START;
+         else if (c =='*') state = INCOMMENT_;
          else state = INCOMMENT;
          break;
        case INLT:

@@ -41,7 +41,7 @@ FILE * listing;
 FILE * code;
 
 /* allocate and set tracing flags */
- /* 10.18 수정*/
+/* 10.18 수정*/
 /*
 int EchoSource = FALSE;
 int TraceScan = FALSE;
