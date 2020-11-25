@@ -39,9 +39,9 @@ declaration_list    : declaration_list declaration
                           if (t != NULL)
                           { while (t->sibling != NULL)
                                 t = t->sibling;
-                            t->sibling = $3;
+                            t->sibling = $2;
                             $$ = $1; }
-                            else $$ = $3;
+                            else $$ = $2;
                         }
                     | declaration  { $$ = $1; }
                     ;
@@ -107,13 +107,13 @@ param_list		      : param_list COMMA param {
 
 param_empty         : VOID {
                         $$ = newStmtNode(ParamK);
-                        $$->child[0] = $1;
-                        $$->attr.name = copyString("(null)");
+                        $$->attr.name = "(null)";
+                        $$->attr.type = "void";
                       }
                     | {
                         $$ = newStmtNode(ParamK);
-                        $$->child[0] = $1;
-                        $$->attr.name = copyString("(null)");
+                        $$->attr.name = "(null)";
+                        $$->attr.type = "void";
                       }
                     ;
 
@@ -236,31 +236,31 @@ simple_expression   : additive_expression LE additive_expression {
                         $$->child[1] = $3;
                         $$->attr.op = LE;
                       }
-                    | add_exp LT add_exp { 
+                    | additive_expression LT additive_expression { 
                         $$ = newExpNode(OpK);
                         $$->child[0] = $1;
                         $$->child[1] = $3;
                         $$->attr.op = LT;
                       }
-                    | add_exp GT add_exp {
+                    | additive_expression GT additive_expression {
                         $$ = newExpNode(OpK);
                         $$->child[0] = $1;
                         $$->child[1] = $3;
                         $$->attr.op = GT;
                       }
-                    | add_exp GE add_exp { 
+                    | additive_expression GE additive_expression { 
                         $$ = newExpNode(OpK);
                         $$->child[0] = $1;
                         $$->child[1] = $3;
                         $$->attr.op = GE;
                       }
-                    | add_exp EQ add_exp {
+                    | additive_expression EQ additive_expression {
                         $$ = newExpNode(OpK);
                         $$->child[0] = $1;
                         $$->child[1] = $3;
                         $$->attr.op = EQ;
                       }
-                    | add_exp NE add_exp { 
+                    | additive_expression NE additive_expression { 
                         $$ = newExpNode(OpK);
                         $$->child[0] = $1;
                         $$->child[1] = $3;
