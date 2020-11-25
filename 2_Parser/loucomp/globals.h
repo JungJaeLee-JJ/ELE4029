@@ -88,8 +88,9 @@ typedef struct treeNode
 
      union { 
         TokenType op;
-        TokenType func_type;
+        
         // 11.25 추가
+        TokenType type;
         int size;
 
         int val;
