@@ -90,7 +90,7 @@ typedef struct treeNode
         TokenType op;
         
         // 11.25 추가
-        TokenType type;
+        char * type;
         int size;
 
         int val;
