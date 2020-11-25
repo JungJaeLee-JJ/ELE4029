@@ -137,6 +137,7 @@ statement_list		  : statement_list statement {
                           $$ = $1; 
                         }
                         else $$ = $2;
+                      }
                     | {$$ = NULL;}
                     ;
 
