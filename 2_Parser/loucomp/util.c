@@ -190,19 +190,25 @@ void printTree( TreeNode * tree )
     if (tree->nodekind==StmtK)
     { switch (tree->kind.stmt) {
         case IfK:
-          fprintf(listing,"If\n");
+          fprintf(listing,"If (condition) (body)\n");
           break;
-        case RepeatK:
-          fprintf(listing,"Repeat\n");
+        case IfEK:
+          fprintf(listing,"If (condition) (body) (else)\n");
           break;
-        case AssignK:
-          fprintf(listing,"Assign to: %s\n",tree->attr.name);
+        case WhileK:
+          fprintf(listing,"While : \n");
           break;
-        case ReadK:
-          fprintf(listing,"Read: %s\n",tree->attr.name);
+        case ReturnK:
+          fprintf(listing,"Return : \n");
           break;
-        case WriteK:
-          fprintf(listing,"Write\n");
+        case CompK:
+          fprintf(listing, "Compound statement : \n");
+          break;
+        case ParamK:
+          fprintf(listing,"Single parameter, name : %s, type : %s\n",tree->attr.name, tree->attr.type);
+          break;
+        case arrParamK:
+          fprintf(listing,"Array parameter, name : %s, type : %s\n", tree->attr.name, tree->attr.type);
           break;
         default:
           fprintf(listing,"Unknown ExpNode kind\n");
@@ -213,11 +219,11 @@ void printTree( TreeNode * tree )
     /* 11월 25일 수정*/
     else if (tree->nodekind==DeclK)
     { switch (tree->kind.decl) {
-        case FunK:
-          fprintf(listing,"Function declaration, name : %s, return ",tree->attr.name);
-          break;
         case VarK:
           fprintf(listing,"Var declaration, name : %s, ",tree->attr.name);
+          break;
+        case FunK:
+          fprintf(listing,"Function declaration, name : %s, return ",tree->attr.name);
           break;
         case arrVarK:
           fprintf(listing,"arr Var declaration, name : %s, size : %d, ",tree->attr.name,tree->attr.size);
@@ -230,6 +236,10 @@ void printTree( TreeNode * tree )
 
     else if (tree->nodekind==ExpK)
     { switch (tree->kind.exp) {
+        case AssignK:
+          fprintf(listing,"Assign : (destination) (source)\n");
+          printToken(tree->attr.op,"\0");
+          break;
         case OpK:
           fprintf(listing,"Op: ");
           printToken(tree->attr.op,"\0");
@@ -237,8 +247,14 @@ void printTree( TreeNode * tree )
         case ConstK:
           fprintf(listing,"Const: %d\n",tree->attr.val);
           break;
+        case CallK:
+          fprintf(listing,"Call, name : %s, with arguments below\n",tree->attr.name);
+          break;
         case IdK:
           fprintf(listing,"Id: %s\n",tree->attr.name);
+          break;
+        case arrIdK:
+          fprintf(listing,"ArrId : %s\n",tree->attr.name);
           break;
         default:
           fprintf(listing,"Unknown ExpNode kind\n");

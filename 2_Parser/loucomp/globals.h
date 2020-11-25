@@ -63,7 +63,8 @@ extern int lineno; /* source line number for listing */
 /**************************************************/
 
 
-typedef enum {StmtK,DeclK,ExpK,TypeK} NodeKind;
+typedef enum {StmtK,DeclK,ExpK} NodeKind;
+
 typedef enum {VarK,FunK,arrVarK} DeclKind;
 typedef enum {IfK,IfEK,WhileK,ReturnK,CompK,ParamK,arrParamK} StmtKind;
 typedef enum {AssignK,OpK,ConstK,CallK,IdK,arrIdK} ExpKind;
@@ -82,6 +83,7 @@ typedef struct treeNode
      union { 
       StmtKind stmt;
       ExpKind exp;
+      DeclKind decl;
     } kind;
 
      union { 
