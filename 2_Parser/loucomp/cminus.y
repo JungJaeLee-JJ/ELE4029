@@ -18,6 +18,7 @@ static int savedLineNo;  /* ditto */
 static TreeNode * savedTree; /* stores syntax tree for later return */
 static int yylex(void);
 int yyerror(char * message);
+static char * savedType;
 
 %}
 
@@ -60,13 +61,13 @@ var_declaration	    : type_specifier identifier SEMI {
                         $$ = newDeclNode(VarK);
                         $$->child[0] = $1;
                         $$->lineno = lineno;
-                        $$->attr.name = identifier;
+                        $$->attr.name = savedName;
                       }
 			              | type_specifier identifier LBRACE NUM RBRACE SEMI {
                         $$ = newDeclNode(arrVarK);
                         $$->child[0] = $1;
                         $$->lineno = lineno;
-                        $$->attr.name = identifier;
+                        $$->attr.name = savedName;
                         $$->attr.size = NUM;
                       }
 			              ;
