@@ -23,6 +23,10 @@ TreeNode * newStmtNode(StmtKind);
  */
 TreeNode * newExpNode(ExpKind);
 
+
+/* 11.25 추가 */
+TreeNode * newDeclNode(DeclKind);
+
 /* Function copyString allocates and makes a new
  * copy of an existing string
  */
