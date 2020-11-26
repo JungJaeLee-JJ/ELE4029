@@ -3,18 +3,12 @@
 CC = gcc
 CFLAGS = 
 
-OBJS = y.tab.o main.o util.o lex.yy.o symtab.o code.o
+OBJS = main.o util.o lex.yy.o y.tab.o symtab.o code.o
 
 all: cminus
 
 cminus: $(OBJS)
 	$(CC) $(CFLAGS) $(OBJS) -o $@ -lfl
-
-y.tab.o: cminus.l globals.h util.h scan.h parse.h
-	yacc -d cminus.y
-	$(CC) $(CFLAGS) -c y.tab.c
-
-y.tab.h: y.tab.c
 
 main.o: main.c globals.h y.tab.h util.h scan.h parse.h analyze.h cgen.h
 	$(CC) $(CFLAGS) -c main.c
@@ -27,6 +21,14 @@ lex.yy.c: cminus.l
 
 lex.yy.o: lex.yy.c globals.h y.tab.h util.h scan.h
 	$(CC) $(CFLAGS) -c lex.yy.c
+
+y.tab.c: cminus.y
+	yacc -d -v cminus.y
+
+y.tab.h: y.tab.c
+
+y.tab.o: y.tab.c globals.h y.tab.h util.h scan.h parse.h
+	$(CC) $(CFLAGS) -c y.tab.c
 
 symtab.o: symtab.c symtab.h
 	$(CC) $(CFLAGS) -c symtab.c

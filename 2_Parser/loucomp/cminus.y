@@ -68,13 +68,11 @@ num                 : NUM { savedNumber = atoi(tokenString); }
 var_declaration	    : type_specifier identifier SEMI {
                         $$ = newDeclNode(VarK);
                         $$->child[0] = $1;
-                        $$->lineno = lineno;
                         $$->attr.name = savedName;
                       }
 			              | type_specifier identifier LBRACE num RBRACE SEMI {
                         $$ = newDeclNode(ArrVarK);
                         $$->child[0] = $1;
-                        $$->lineno = lineno;
                         $$->attr.name = savedName;
                         $$->attr.var_size = savedNumber;
                       }
@@ -181,14 +179,12 @@ selection_stmt		  : IF LPAREN expression RPAREN statement %prec NO_ELSE {
                         $$->child[0] = $3;
                         $$->child[1] = $5;
                         $$->child[2] = NULL;
-                        $$->lineno = $3->lineno;
                       }
                     | IF LPAREN expression RPAREN statement ELSE statement {
                         $$ = newStmtNode(IfEK);
                         $$->child[0] = $3;
                         $$->child[1] = $5;
                         $$->child[2] = $7;
-                        $$->lineno = $3->lineno;
                       }
                     ;
 
