@@ -205,10 +205,10 @@ void printTree( TreeNode * tree )
           fprintf(listing, "Compound statement : \n");
           break;
         case ParamK:
-          fprintf(listing,"Single parameter, name : %s, type : %s\n",tree->attr.name, tree->attr.type);
+          fprintf(listing,"Single parameter, name : %s, type : %s",tree->attr.name, tree->attr.type);
           break;
         case arrParamK:
-          fprintf(listing,"Array parameter, name : %s, type : %s\n", tree->attr.name, tree->attr.type);
+          fprintf(listing,"Array parameter, name : %s, type : %s", tree->attr.name, tree->attr.type);
           break;
         default:
           fprintf(listing,"Unknown ExpNode kind\n");
