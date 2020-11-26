@@ -62,7 +62,7 @@ declaration         : var_declaration { $$ = $1; }
 identifier          : ID { savedName = copyString(tokenString); }
                     ;
 
-arr_size                : NUM { savedNumber = atoi(tokenString); }
+num              : NUM { savedNumber = atoi(tokenString); }
                     ;
 
 var_declaration	    : type_specifier identifier SEMI {
@@ -71,12 +71,12 @@ var_declaration	    : type_specifier identifier SEMI {
                         $$->lineno = lineno;
                         $$->attr.var_name = savedName;
                       }
-			              | type_specifier identifier LBRACE arr_size RBRACE SEMI {
+			              | type_specifier identifier LBRACE num RBRACE SEMI {
                         $$ = newDeclNode(ArrVarK);
                         $$->child[0] = $1;
                         $$->lineno = lineno;
                         $$->attr.var_name = savedName;
-                        $$->attr.var_number = savedarr_size;
+                        $$->attr.var_size = savedNumber;
                       }
 			              ;          
 
@@ -306,7 +306,7 @@ term                : term TIMES factor {
 factor              : LPAREN expression RPAREN { $$ = $2; }
                     | var { $$ = $1; }
                     | call { $$ = $1; }
-                    | arr_size { 
+                    | num { 
                         $$ = newExpNode(ConstK);
                         $$->attr.val = savedNumber;
                       }
