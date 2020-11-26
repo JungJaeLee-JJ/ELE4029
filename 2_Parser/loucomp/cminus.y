@@ -28,6 +28,10 @@ int yyerror(char * message);
 
 %}
 
+/* 11.25 */
+%nonassoc NO_ELSE
+%nonassoc ELSE
+
 /* 11.25  modify code for token */
 %token ERROR
 %token IF ELSE WHILE RETURN INT VOID
