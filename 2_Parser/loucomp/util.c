@@ -186,7 +186,7 @@ void printTree( TreeNode * tree )
 { int i;
   INDENT;
   while (tree != NULL) {
-    printSpaces();
+    if(tree->nodekind != DeclK || tree->kind.decl != TypeK) printSpaces();
     if (tree->nodekind==StmtK)
     { switch (tree->kind.stmt) {
         case IfK:
