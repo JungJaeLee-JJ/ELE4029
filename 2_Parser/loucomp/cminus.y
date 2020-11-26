@@ -48,7 +48,7 @@ declaration_list    : declaration_list declaration
                     | declaration  { $$ = $1; }
                     ;
                 
-declaration         : vars_declaration { $$ = $1; }
+declaration         : var_declaration { $$ = $1; }
                     | fun_declaration { $$ = $1; }
                     ;
 
@@ -58,38 +58,23 @@ identifier          : ID {
                       }
                     ;
 
-
 number_token        : NUM {
                         savedNumber = atoi(tokenString);
                         savedLineNo = lineno;
                       }
                     ;
 
-vars_declaration     : type_specifier vars SEMI {$$ = $2;}
-                    ;
-
-vars                : vars COMMA var_declaration {
-                        YYSTYPE t = $1;
-                        if (t != NULL){ 
-                          while (t->sibling != NULL) t = t->sibling;
-                          t->sibling = $3;
-                          $$ = $1; 
-                        }
-                      else $$ = $3;
-                      }
-                    | var_declaration {$$ = $1;}
-                    ;
-
-
-var_declaration	    : identifier  {
+var_declaration	    : type_specifier identifier SEMI {
                         $$ = newDeclNode(VarK);
+                        $$->child[0] = $1;
+                        $$->lineno = lineno;
                         $$->attr.name = savedName;
-                        $$->attr.type = savedType;
                       }
-			              | identifier LBRACE number_token RBRACE {
+			              | type_specifier identifier LBRACE NUM RBRACE SEMI {
                         $$ = newDeclNode(arrVarK);
+                        $$->child[0] = $1;
+                        $$->lineno = lineno;
                         $$->attr.name = savedName;
-                        $$->attr.type = savedType;
                         $$->attr.size = savedNumber;
                       }
 			              ;
