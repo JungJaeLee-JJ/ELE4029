@@ -91,7 +91,7 @@ void printToken( TokenType token, const char* tokenString )
           "ERROR: %s\n",tokenString);
       break;
     default: /* should never happen */
-      fprintf(listing,"Unknown token: %d\n",token);
+      fprintf(listing,"Unknown token: %d %s\n",token, tokenString);
   }
 }
 

@@ -217,6 +217,7 @@ return_stmt		      : RETURN SEMI {
 
 expression		      : var ASSIGN expression {
                         $$ = newExpNode(AssignK);
+                        $$->attr.name = savedName;
                         $$->child[0] = $1;
                         $$->child[1] = $3;
                       }
@@ -312,7 +313,7 @@ factor              : LPAREN expression RPAREN { $$ = $2; }
                     | call { $$ = $1; }
                     | number_token { 
                         $$ = newExpNode(ConstK);
-                        $$->attr.val = savedNumber;
+                        $$->attr.val = atoi(tokenString);
                       }
                     ;
 
