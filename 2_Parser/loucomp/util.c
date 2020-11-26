@@ -205,10 +205,10 @@ void printTree( TreeNode * tree )
           fprintf(listing, "Compound statement : \n");
           break;
         case ParamK:
-          fprintf(listing,"Single parameter, name : %s, ",tree->attr.name, tree->attr.type);
+          fprintf(listing,"Single parameter, name : %s, ",tree->attr.name);
           break;
         case arrParamK:
-          fprintf(listing,"Array parameter, name : %s, ", tree->attr.name, tree->attr.type);
+          fprintf(listing,"Array parameter, name : %s, ", tree->attr.name);
           break;
         default:
           fprintf(listing,"Unknown ExpNode kind\n");
@@ -220,10 +220,10 @@ void printTree( TreeNode * tree )
     else if (tree->nodekind==DeclK)
     { switch (tree->kind.decl) {
         case VarK:
-          fprintf(listing,"Var declaration, name : %s, ",tree->attr.name,tree->attr.type);
+          fprintf(listing,"Var declaration, name : %s, ",tree->attr.name);
           break;
         case FunK:
-          fprintf(listing,"Function declaration, name : %s, return ",tree->attr.name, tree->attr.type);
+          fprintf(listing,"Function declaration, name : %s, return ",tree->attr.name);
           break;
         case arrVarK:
           fprintf(listing,"arr Var declaration, name : %s, size : %d, ",tree->attr.name,tree->attr.var_size);
