@@ -215,11 +215,14 @@ return_stmt		      : RETURN SEMI {
                     }
                     ;
 
-expression		      : var ASSIGN expression {
+expression		      : var {
                         $$ = newExpNode(AssignK);
                         $$->attr.name = savedName;
+                      }
+                    ASSIGN expression {
+                        $$ = $2;
                         $$->child[0] = $1;
-                        $$->child[1] = $3;
+                        $$->child[1] = $4;
                       }
                     | simple_expression { $$ = $1; }
                     ;
