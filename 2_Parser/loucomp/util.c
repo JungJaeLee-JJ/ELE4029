@@ -205,10 +205,10 @@ void printTree( TreeNode * tree )
           fprintf(listing, "Compound statement : \n");
           break;
         case ParamK:
-          fprintf(listing,"Single parameter, name : %s, type : %s",tree->attr.name, tree->attr.type);
+          fprintf(listing,"Single parameter, name : %s, ",tree->attr.name, tree->attr.type);
           break;
         case arrParamK:
-          fprintf(listing,"Array parameter, name : %s, type : %s", tree->attr.name, tree->attr.type);
+          fprintf(listing,"Array parameter, name : %s, ", tree->attr.name, tree->attr.type);
           break;
         default:
           fprintf(listing,"Unknown ExpNode kind\n");
@@ -220,17 +220,17 @@ void printTree( TreeNode * tree )
     else if (tree->nodekind==DeclK)
     { switch (tree->kind.decl) {
         case VarK:
-          fprintf(listing,"Var declaration, name : %s, type : %s\n ",tree->attr.name,tree->attr.type);
+          fprintf(listing,"Var declaration, name : %s, ",tree->attr.name,tree->attr.type);
           break;
         case FunK:
-          fprintf(listing,"Function declaration, name : %s, return type :%s\n",tree->attr.name, tree->attr.type);
+          fprintf(listing,"Function declaration, name : %s, return ",tree->attr.name, tree->attr.type);
           break;
         case arrVarK:
           fprintf(listing,"arr Var declaration, name : %s, size : %d, ",tree->attr.name,tree->attr.var_size);
           break;
         case TypeK:
-          if(tree->attr.type == INT) fprintf(listing,"int\n");
-          else if(tree->attr.type == VOID) fprintf(listing,"void\n");
+          if(tree->attr.type == INT) fprintf(listing,"type : int\n");
+          else if(tree->attr.type == VOID) fprintf(listing,"type : void\n");
           break;
         default:
           fprintf(listing,"Unknown DeclNode kind\n");
