@@ -169,7 +169,7 @@ void printTree( TreeNode * tree )
   while (tree != NULL) {
     
     /* 11.26 출력 간격 맞춤 */
-    if(tree->nodekind != DeclK && tree->kind.decl != TypeK) printSpaces();
+    if(tree->nodekind != DeclK || tree->kind.decl != TypeK) printSpaces();
    
     if (tree->nodekind==StmtK)
     { switch (tree->kind.stmt) {
