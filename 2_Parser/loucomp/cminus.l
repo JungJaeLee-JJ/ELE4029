@@ -9,6 +9,8 @@
 #include "globals.h"
 #include "util.h"
 #include "scan.h"
+#include "parse.h"
+
 /* lexeme of identifier or reserved word */
 char tokenString[MAXTOKENLEN+1];
 %}
