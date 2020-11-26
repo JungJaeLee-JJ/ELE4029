@@ -217,7 +217,6 @@ return_stmt		      : RETURN SEMI {
 
 expression		      : var ASSIGN expression {
                         $$ = newExpNode(AssignK);
-                        $$->attr.name = savedName;
                         $$->child[0] = $1;
                         $$->child[1] = $3;
                       }
