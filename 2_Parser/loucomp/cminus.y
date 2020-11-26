@@ -62,7 +62,7 @@ declaration         : var_declaration { $$ = $1; }
 identifier          : ID { savedName = copyString(tokenString); }
                     ;
 
-num              : NUM { savedNumber = atoi(tokenString); }
+num                 : NUM { savedNumber = atoi(tokenString); }
                     ;
 
 var_declaration	    : type_specifier identifier SEMI {
@@ -71,7 +71,7 @@ var_declaration	    : type_specifier identifier SEMI {
                         $$->lineno = lineno;
                         $$->attr.var_name = savedName;
                       }
-			              | type_specifier identifier LBRACE num RBRACE SEMI {
+			              | type_specifier identifier LBRACE saveNumber num SEMI {
                         $$ = newDeclNode(ArrVarK);
                         $$->child[0] = $1;
                         $$->lineno = lineno;
