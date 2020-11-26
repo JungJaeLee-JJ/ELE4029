@@ -15,20 +15,6 @@
 void printToken( TokenType token, const char* tokenString )
 { switch (token)
   { 
-    /* 10.18 수정*/
-    /*
-    case IF:
-    case THEN:
-    case ELSE:
-    case END:
-    case REPEAT:
-    case UNTIL:
-    case READ:
-    case WRITE:
-      fprintf(listing,
-         "reserved word: %s\n",tokenString);
-      break;
-    */
 
     case IF: 
     case ELSE: 
@@ -37,21 +23,6 @@ void printToken( TokenType token, const char* tokenString )
     case INT: 
     case VOID: fprintf(listing,"reserved word: %s\n",tokenString); break;
 
-
-    /* 10.18 수정*/
-    /*
-    case ASSIGN: fprintf(listing,":=\n"); break;
-    case LT: fprintf(listing,"<\n"); break;
-    case EQ: fprintf(listing,"=\n"); break;
-    case LPAREN: fprintf(listing,"(\n"); break;
-    case RPAREN: fprintf(listing,")\n"); break;
-    case SEMI: fprintf(listing,";\n"); break;
-    case PLUS: fprintf(listing,"+\n"); break;
-    case MINUS: fprintf(listing,"-\n"); break;
-    case TIMES: fprintf(listing,"*\n"); break;
-    case OVER: fprintf(listing,"/\n"); break;
-    case ENDFILE: fprintf(listing,"EOF\n"); break;
-    */
     case ASSIGN: fprintf(listing,"=\n"); break;
     case EQ: fprintf(listing,"==\n"); break;
     case NE: fprintf(listing,"!=\n"); break;
@@ -220,7 +191,7 @@ void printTree( TreeNode * tree )
           fprintf(listing,"Function declaration, name : %s, return ",tree->attr.name);
           break;
         case arrVarK:
-          fprintf(listing,"arr Var declaration, name : %s, size : %d, ",tree->attr.name,tree->attr.var_size);
+          fprintf(listing,"VarArr declaration, name : %s, size : %d, ",tree->attr.name,tree->attr.var_size);
           break;
         case TypeK:
           if(tree->attr.type == INT) fprintf(listing,"type : int\n");

@@ -78,7 +78,7 @@ var_declaration	    : type_specifier identifier SEMI {
                         $$->lineno = lineno;
                         $$->attr.name = savedName;
                       }
-			              | type_specifier identifier LBRACE NUM RBRACE SEMI {
+			              | type_specifier identifier LBRACE number_token RBRACE SEMI {
                         $$ = newDeclNode(arrVarK);
                         $$->child[0] = $1;
                         $$->lineno = lineno;
