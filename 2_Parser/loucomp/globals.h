@@ -91,7 +91,7 @@ typedef struct treeNode
         TokenType op;
         
         /* 11.25 추가 */
-        TokenType * type;
+        TokenType type;
         char * arr_name;
         int arr_size;
 
