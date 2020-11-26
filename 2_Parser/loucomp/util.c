@@ -249,7 +249,7 @@ void printTree( TreeNode * tree )
           fprintf(listing,"Single parameter, name : %s, ",tree->attr.name);
           break;
         case ArrParamK:
-          printf(listing,"Array parameter, name : %s, ", tree->attr.name);
+          fprintf(listing,"Array parameter, name : %s, ", tree->attr.name);
           break;
         default:
           fprintf(listing,"Unknown ParamNode kind\n");
