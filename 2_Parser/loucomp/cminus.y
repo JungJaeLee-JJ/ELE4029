@@ -72,7 +72,7 @@ var_declaration	    : type_specifier identifier SEMI {
                       }
 			              ;
 
-type_specifier		  : INT { savedType = copyString(tokenString); }
+type_specifier		  : INT { savedType = copyString(tokenString);}
                     | VOID { savedType = copyString(tokenString);}
                     ;
 
@@ -83,6 +83,7 @@ fun_declaration     : type_specifier identifier {
                       }
                       LPAREN params RPAREN compound_stmt {
                         $$ = $3;
+                        $$->child[0] = $1;
                         $$->child[1] = $5;
                         $$->child[2] = $7;
                       }
