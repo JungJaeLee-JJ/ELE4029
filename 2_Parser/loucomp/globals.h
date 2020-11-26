@@ -92,8 +92,8 @@ typedef struct treeNode
         
         /* 11.25 추가 */
         TokenType * type;
-        char * var_name;
-        int var_size;
+        char * arr_name;
+        int arr_size;
 
         int val;
         char * name; 
