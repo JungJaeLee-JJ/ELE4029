@@ -9,6 +9,8 @@
 
 #include "globals.h"
 #include "util.h"
+#include "scan.h"
+#include "parse.h"
 
 #define YYSTYPE TreeNode *
 static char * savedName; /* for use in assignments */
@@ -153,7 +155,7 @@ statement_list		  : statement_list statement {
                         }
                         else $$ = $2;
                       }
-                    | {$$ = NULL;}
+                    | { $$ = NULL; }
                     ;
 
 statement		        : expression_stmt { $$ = $1; }
@@ -161,7 +163,6 @@ statement		        : expression_stmt { $$ = $1; }
                     | selection_stmt { $$ = $1; }
                     | iteration_stmt { $$ = $1; }
                     | return_stmt { $$ = $1; }
-                    | error { $$ = NULL; }
                     ;
 
 expression_stmt		  : expression SEMI { $$ = $1; }
