@@ -69,13 +69,13 @@ var_declaration	    : type_specifier identifier SEMI {
                         $$ = newDeclNode(VarK);
                         $$->child[0] = $1;
                         $$->lineno = lineno;
-                        $$->attr.var_name = savedName;
+                        $$->attr.name = savedName;
                       }
 			              | type_specifier identifier LBRACE NUM RBRACE SEMI {
                         $$ = newDeclNode(ArrVarK);
                         $$->child[0] = $1;
                         $$->lineno = lineno;
-                        $$->attr.var_name = savedName;
+                        $$->attr.name = savedName;
                         $$->attr.var_size = savedNumber;
                       }
 			              ;          
