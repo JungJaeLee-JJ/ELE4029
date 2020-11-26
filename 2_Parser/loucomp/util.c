@@ -245,7 +245,7 @@ void printTree( TreeNode * tree )
           printToken(tree->attr.op,"\0");
           break;
         case OpK:
-          fprintf(listing,"Op: ");
+          fprintf(listing,"Op : ");
           printToken(tree->attr.op,"\0");
           break;
         case ConstK:

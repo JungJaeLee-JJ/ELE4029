@@ -324,7 +324,7 @@ factor              : LPAREN expression RPAREN { $$ = $2; }
                     | call { $$ = $1; }
                     | number_token { 
                         $$ = newExpNode(ConstK);
-                        $$->attr.val = atoi(tokenString);
+                        $$->attr.val = savedNumber;
                       }
                     ;
 
@@ -344,12 +344,12 @@ args                : arg_list { $$ = $1; }
                     
 arg_list            : arg_list COMMA expression { 
                         YYSTYPE t = $1;
-                        if(t != NULL)
-                        { while (t->sibling != NULL)
-                              t = t->sibling;
+                        if(t != NULL) { 
+                          while (t->sibling != NULL) t = t->sibling;
                           t->sibling = $3;
-                          $$ = $1; }
-                          else $$ = $3;
+                          $$ = $1; 
+                        }
+                        else $$ = $3;
                       }
                     | expression { $$ = $1; }
                     ;
