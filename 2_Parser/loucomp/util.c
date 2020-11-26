@@ -198,7 +198,6 @@ void printTree( TreeNode * tree )
     { switch (tree->kind.exp) {
         case AssignK:
           fprintf(listing,"Assign : (destination) (source)\n");
-          printToken(tree->attr.op,"\0");
           break;
         case OpK:
           fprintf(listing,"Op : ");
