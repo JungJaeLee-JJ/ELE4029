@@ -14,6 +14,7 @@
 
 #define YYSTYPE TreeNode *
 static char * savedName; /* for use in assignments */
+static int savedNumber;
 static int savedLineNo;  /* ditto */
 static TreeNode * savedTree; /* stores syntax tree for later return */
 static int yylex(void);
