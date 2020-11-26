@@ -312,7 +312,7 @@ factor              : LPAREN expression RPAREN { $$ = $2; }
                     | call { $$ = $1; }
                     | number_token { 
                         $$ = newExpNode(ConstK);
-                        $$->attr.val = atoi(tokenString);
+                        $$->attr.val = savedNumber;
                       }
                     ;
 
