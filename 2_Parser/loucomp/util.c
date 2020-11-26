@@ -234,14 +234,8 @@ void printTree( TreeNode * tree )
           fprintf(listing,"VarArr declaration, name : %s, size : %d, ", tree->attr.arr_name, tree->attr.arr_size);
           break;
         case TypeK:
-          switch (tree->attr.type) {
-            case INT:
-              fprintf(listing,"type : int\n");
-              break;
-            case VOID:
-              fprintf(listing,"type : void\n");
-              break;
-          }
+          if(tree->attr.type == INT) fprintf(listing,"type : int\n");
+          else if(tree->attr.type == VOID) fprintf(listing,"type : void\n");
           break;
         default:
           fprintf(listing,"Unknown DeclNode kind\n");
