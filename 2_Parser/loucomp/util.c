@@ -223,7 +223,7 @@ void printTree( TreeNode * tree )
           fprintf(listing,"Var declaration, name : %s, ",tree->attr.name);
           break;
         case FunK:
-          fprintf(listing,"Function declaration, name : %s, return ",tree->attr.name);
+          fprintf(listing,"Function declaration, name : %s, return type :%s\n",tree->attr.name, tree->attr.type);
           break;
         case arrVarK:
           fprintf(listing,"arr Var declaration, name : %s, size : %d, ",tree->attr.name,tree->attr.size);
@@ -245,13 +245,13 @@ void printTree( TreeNode * tree )
           printToken(tree->attr.op,"\0");
           break;
         case ConstK:
-          fprintf(listing,"Const: %d\n",tree->attr.val);
+          fprintf(listing,"Const : %d\n",tree->attr.val);
           break;
         case CallK:
           fprintf(listing,"Call, name : %s, with arguments below\n",tree->attr.name);
           break;
         case IdK:
-          fprintf(listing,"Id: %s\n",tree->attr.name);
+          fprintf(listing,"Id : %s\n",tree->attr.name);
           break;
         case arrIdK:
           fprintf(listing,"ArrId : %s\n",tree->attr.name);
