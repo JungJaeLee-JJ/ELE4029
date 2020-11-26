@@ -32,10 +32,10 @@ int yyerror(char * message);
 %nonassoc ELSE
 
 /* 11.25  modify code for token */
-%token ERROR
 %token IF ELSE WHILE RETURN INT VOID
 %token ID NUM
 %token ASSIGN EQ NE LT LE GT GE PLUS MINUS TIMES OVER LPAREN RPAREN LBRACE RBRACE LCURLY RCURLY SEMI COMMA
+%token ERROR
 
 %% /* Grammar for TINY */
 /* 11.25  modify code like BNF Grammar */
@@ -59,16 +59,10 @@ declaration         : var_declaration { $$ = $1; }
                     | fun_declaration { $$ = $1; }
                     ;
 
-identifier          : ID {
-                        savedName = copyString(tokenString);
-                        savedLineNo = lineno;
-                      }
+identifier          : ID { savedName = copyString(tokenString); }
                     ;
 
-number_token        : NUM {
-                        savedNumber = atoi(tokenString);
-                        savedLineNo = lineno;
-                      }
+size                : NUM { savedNumber = atoi(tokenString); }
                     ;
 
 var_declaration	    : type_specifier identifier SEMI {
@@ -77,7 +71,7 @@ var_declaration	    : type_specifier identifier SEMI {
                         $$->lineno = lineno;
                         $$->attr.var_name = savedName;
                       }
-			              | type_specifier identifier LBRACE number_token RBRACE SEMI {
+			              | type_specifier identifier LBRACE size RBRACE SEMI {
                         $$ = newDeclNode(ArrVarK);
                         $$->child[0] = $1;
                         $$->lineno = lineno;
@@ -312,7 +306,7 @@ term                : term TIMES factor {
 factor              : LPAREN expression RPAREN { $$ = $2; }
                     | var { $$ = $1; }
                     | call { $$ = $1; }
-                    | number_token { 
+                    | size { 
                         $$ = newExpNode(ConstK);
                         $$->attr.val = savedNumber;
                       }
