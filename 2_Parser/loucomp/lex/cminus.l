@@ -23,35 +23,46 @@ whitespace  [ \t]+
 %%
 
 "if"            {return IF;}
-"then"          {return THEN;}
 "else"          {return ELSE;}
-"end"           {return END;}
-"repeat"        {return REPEAT;}
-"until"         {return UNTIL;}
-"read"          {return READ;}
-"write"         {return WRITE;}
-":="            {return ASSIGN;}
-"="             {return EQ;}
+"int"           {return INT;}
+"return"        {return RETURN;}
+"void"          {return VOID;}
+"while"         {return WHILE;}
+"="             {return ASSIGN;}
+"=="            {return EQ;}
 "<"             {return LT;}
+">"             {return GT;}
+"<="            {return LE;}
+">="            {return GE;}
+"!="            {return NE;}
 "+"             {return PLUS;}
 "-"             {return MINUS;}
-"*"             {return TIMES;}
-"/"             {return OVER;}
-"("             {return LPAREN;}
-")"             {return RPAREN;}
-";"             {return SEMI;}
-{number}        {return NUM;}
-{identifier}    {return ID;}
-{newline}       {lineno++;}
-{whitespace}    {/* skip whitespace */}
-"{"             { char c;
+"/*"             { char c;
+                  char prev = '\0';
                   do
                   { c = input();
                     if (c == EOF) break;
                     if (c == '\n') lineno++;
-                  } while (c != '}');
+                    if (prev == '*' && c == '/') break;
+                    prev = c;
+                  } while (1);
                 }
 .               {return ERROR;}
+"*"             {return TIMES;}
+"/"             {return OVER;}
+"("             {return LPAREN;}
+")"             {return RPAREN;}
+"{"             {return LCURLY;}
+"}"             {return RCURLY;}
+"["             {return LBRACE;}
+"]"             {return RBRACE;}
+";"             {return SEMI;}
+","             {return COMMA;}
+{number}        {return NUM;}
+{identifier}    {return ID;}
+{newline}       {lineno++;}
+{whitespace}    {/* skip whitespace */}
+
 
 %%
 
@@ -72,3 +83,4 @@ TokenType getToken(void)
   }
   return currentToken;
 }
+

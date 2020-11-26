@@ -25,7 +25,6 @@ static TreeNode * savedTree; /* stores syntax tree for later return */
 static int yylex(void);
 int yyerror(char * message);
 
-
 %}
 
 /* 11.25 shift reduce comflict 해결 */
@@ -55,7 +54,7 @@ declaration_list    : declaration_list declaration {
                       }
                     | declaration  { $$ = $1; }
                     ;
-                
+
 declaration         : var_declaration { $$ = $1; }
                     | fun_declaration { $$ = $1; }
                     ;
@@ -79,13 +78,13 @@ var_declaration	    : type_specifier identifier SEMI {
                         $$->attr.name = savedName;
                       }
 			              | type_specifier identifier LBRACE NUM RBRACE SEMI {
-                        $$ = newDeclNode(arrVarK);
+                        $$ = newDeclNode(ArrVarK);
                         $$->child[0] = $1;
                         $$->lineno = lineno;
                         $$->attr.var_name = savedName;
                         $$->attr.var_size = savedNumber;
                       }
-			              ;
+			              ;          
 
 type_specifier		  : INT { 
                         $$ = newDeclNode(TypeK);
@@ -110,9 +109,12 @@ fun_declaration     : type_specifier identifier {
                     ;
 
 params              : param_list { $$ = $1; }
-                    | param_empty 
+                    | type_specifier {
+                       $$ = newParamNode(SingleParamK);
+                        $$->child[0] = $1;
+                        $$->attr.name = copyString("(null)");
+                      }
                     ;
-
 
 param_list		      : param_list COMMA param {
                         YYSTYPE t = $1;
@@ -126,28 +128,35 @@ param_list		      : param_list COMMA param {
                     | param { $$ = $1; }
                     ;
 
-
-param_empty         : type_specifier {
-                        $$ = newStmtNode(ParamK);
-                        $$->child[0] = $1;
-                        $$->attr.name = copyString("(null)");
-                      }
-                    | {
-                        $$ = newStmtNode(ParamK);
-                        $$->attr.name = copyString("(null)");
-                      }
-                    ;
-
 param               : type_specifier identifier {
-                        $$ = newStmtNode(ParamK);
+                        $$ = newParamNode(SingleParamK);
                         $$->attr.name = savedName;
                         $$->child[0] = $1;
                       }
 			              | type_specifier identifier LBRACE RBRACE {
-                        $$ = newStmtNode(arrParamK);
+                        $$ = newParamNode(ArrParamK);
                         $$->attr.name = savedName;
                         $$->child[0] = $1;
                       }
+                    ;
+
+compound_stmt		    : LCURLY local_declarations statement_list RCURLY {
+                        $$ = newStmtNode(CompK);
+                        $$->child[0] = $2;
+                        $$->child[1] = $3;
+                      }
+			              ;
+           
+local_declarations	: local_declarations var_declaration {
+                        YYSTYPE t = $1;
+                        if(t != NULL) { 
+                          while (t->sibling != NULL)  t = t->sibling;
+                          t->sibling = $2;
+                          $$ = $1; 
+                        }
+                        else $$ = $2;
+                      }
+                    | {$$ = NULL;}
                     ;
 
 statement_list		  : statement_list statement {
@@ -173,25 +182,6 @@ expression_stmt		  : expression SEMI { $$ = $1; }
                     | SEMI { $$ = NULL; }
                     ;
 
-compound_stmt		    : LCURLY local_declarations statement_list RCURLY {
-                        $$ = newStmtNode(CompK);
-                        $$->child[0] = $2;
-                        $$->child[1] = $3;
-                      }
-			              ;
-
-local_declarations	: local_declarations var_declaration {
-                        YYSTYPE t = $1;
-                        if(t != NULL) { 
-                          while (t->sibling != NULL)  t = t->sibling;
-                          t->sibling = $2;
-                          $$ = $1; 
-                        }
-                        else $$ = $2;
-                      }
-                    | {$$ = NULL;}
-                    ;
-
 selection_stmt		  : IF LPAREN expression RPAREN statement %prec NO_ELSE {
                         $$ = newStmtNode(IfK);
                         $$->child[0] = $3;
@@ -208,13 +198,13 @@ selection_stmt		  : IF LPAREN expression RPAREN statement %prec NO_ELSE {
                       }
                     ;
 
+
 iteration_stmt		  : WHILE LPAREN expression RPAREN statement {
                         $$ = newStmtNode(WhileK);
                         $$->child[0] = $3;
                         $$->child[1] = $5;
                       }
 			              ;
-
 
 return_stmt		      : RETURN SEMI {
                       $$ = newStmtNode(ReturnK);
@@ -225,6 +215,7 @@ return_stmt		      : RETURN SEMI {
                       $$->child[0] = $2;
                     }
                     ;
+
 
 expression		      : var ASSIGN expression {
                         $$ = newExpNode(AssignK);
@@ -239,7 +230,7 @@ var			            : identifier {
                         $$->attr.name = savedName;
                       }
                     | identifier {
-                        $$ = newExpNode(arrIdK);
+                        $$ = newExpNode(ArrIdK);
                         $$->attr.name = savedName;
                       }
                     LBRACE expression RBRACE {

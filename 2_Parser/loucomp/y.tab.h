@@ -45,77 +45,67 @@ extern int yydebug;
 # define YYTOKENTYPE
   enum yytokentype
   {
-    ERROR = 258,
-    IF = 259,
-    ELSE = 260,
-    WHILE = 261,
-    RETURN = 262,
-    INT = 263,
-    VOID = 264,
-    THEN = 265,
-    END = 266,
-    REPEAT = 267,
-    UNTIL = 268,
-    READ = 269,
-    WRITE = 270,
-    ID = 271,
-    NUM = 272,
-    ASSIGN = 273,
-    EQ = 274,
-    NE = 275,
-    LT = 276,
-    LE = 277,
-    GT = 278,
-    GE = 279,
-    PLUS = 280,
-    MINUS = 281,
-    TIMES = 282,
-    OVER = 283,
-    LPAREN = 284,
-    RPAREN = 285,
-    LBRACE = 286,
-    RBRACE = 287,
-    LCURLY = 288,
-    RCURLY = 289,
-    SEMI = 290,
-    COMMA = 291
+    IF = 258,
+    ELSE = 259,
+    WHILE = 260,
+    RETURN = 261,
+    INT = 262,
+    VOID = 263,
+    ID = 264,
+    NUM = 265,
+    ASSIGN = 266,
+    EQ = 267,
+    NE = 268,
+    LT = 269,
+    LE = 270,
+    GT = 271,
+    GE = 272,
+    PLUS = 273,
+    MINUS = 274,
+    TIMES = 275,
+    OVER = 276,
+    LPAREN = 277,
+    RPAREN = 278,
+    LBRACE = 279,
+    RBRACE = 280,
+    LCURLY = 281,
+    RCURLY = 282,
+    SEMI = 283,
+    COMMA = 284,
+    ERROR = 285,
+    NO_ELSE = 286
   };
 #endif
 /* Tokens.  */
-#define ERROR 258
-#define IF 259
-#define ELSE 260
-#define WHILE 261
-#define RETURN 262
-#define INT 263
-#define VOID 264
-#define THEN 265
-#define END 266
-#define REPEAT 267
-#define UNTIL 268
-#define READ 269
-#define WRITE 270
-#define ID 271
-#define NUM 272
-#define ASSIGN 273
-#define EQ 274
-#define NE 275
-#define LT 276
-#define LE 277
-#define GT 278
-#define GE 279
-#define PLUS 280
-#define MINUS 281
-#define TIMES 282
-#define OVER 283
-#define LPAREN 284
-#define RPAREN 285
-#define LBRACE 286
-#define RBRACE 287
-#define LCURLY 288
-#define RCURLY 289
-#define SEMI 290
-#define COMMA 291
+#define IF 258
+#define ELSE 259
+#define WHILE 260
+#define RETURN 261
+#define INT 262
+#define VOID 263
+#define ID 264
+#define NUM 265
+#define ASSIGN 266
+#define EQ 267
+#define NE 268
+#define LT 269
+#define LE 270
+#define GT 271
+#define GE 272
+#define PLUS 273
+#define MINUS 274
+#define TIMES 275
+#define OVER 276
+#define LPAREN 277
+#define RPAREN 278
+#define LBRACE 279
+#define RBRACE 280
+#define LCURLY 281
+#define RCURLY 282
+#define SEMI 283
+#define COMMA 284
+#define ERROR 285
+#define NO_ELSE 286
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED

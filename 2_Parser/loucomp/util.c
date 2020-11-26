@@ -16,11 +16,11 @@ void printToken( TokenType token, const char* tokenString )
 { switch (token)
   { 
 
-    case IF: 
-    case ELSE: 
-    case WHILE: 
-    case RETURN: 
-    case INT: 
+    case IF:
+    case ELSE:
+    case WHILE:
+    case RETURN:
+    case INT:
     case VOID: fprintf(listing,"reserved word: %s\n",tokenString); break;
 
     case ASSIGN: fprintf(listing,"=\n"); break;
@@ -56,7 +56,7 @@ void printToken( TokenType token, const char* tokenString )
           "ERROR: %s\n",tokenString);
       break;
     default: /* should never happen */
-      fprintf(listing,"Unknown token: %d %s\n",token, tokenString);
+      fprintf(listing,"Unknown token: %d\n",token);
   }
 }
 
@@ -73,21 +73,6 @@ TreeNode * newStmtNode(StmtKind kind)
     t->sibling = NULL;
     t->nodekind = StmtK;
     t->kind.stmt = kind;
-    t->lineno = lineno;
-  }
-  return t;
-}
-
-TreeNode * newDeclNode(DeclKind kind)
-{ TreeNode * t = (TreeNode *) malloc(sizeof(TreeNode));
-  int i;
-  if (t==NULL)
-    fprintf(listing,"Out of memory error at line %d\n",lineno);
-  else {
-    for (i=0;i<MAXCHILDREN;i++) t->child[i] = NULL;
-    t->sibling = NULL;
-    t->nodekind = DeclK;
-    t->kind.decl = kind;
     t->lineno = lineno;
   }
   return t;
@@ -112,6 +97,37 @@ TreeNode * newExpNode(ExpKind kind)
   return t;
 }
 
+/* 11.26 추가 */
+TreeNode * newDeclNode(DeclKind kind)
+{ TreeNode * t = (TreeNode *) malloc(sizeof(TreeNode));
+  int i;
+  if (t==NULL)
+    fprintf(listing,"Out of memory error at line %d\n",lineno);
+  else {
+    for (i=0;i<MAXCHILDREN;i++) t->child[i] = NULL;
+    t->sibling = NULL;
+    t->nodekind = DeclK;
+    t->kind.decl = kind;
+    t->lineno = lineno;
+  }
+  return t;
+}
+
+TreeNode * newParamNode(ParamKind kind)
+{ TreeNode * t = (TreeNode *) malloc(sizeof(TreeNode));
+  int i;
+  if (t==NULL)
+    fprintf(listing,"Out of memory error at line %d\n",lineno);
+  else {
+    for (i=0;i<MAXCHILDREN;i++) t->child[i] = NULL;
+    t->sibling = NULL;
+    t->nodekind = ParamK;
+    t->kind.param = kind;
+    t->lineno = lineno;
+  }
+  return t;
+}
+
 
 /* Function copyString allocates and makes a new
  * copy of an existing string
@@ -131,7 +147,7 @@ char * copyString(char * s)
 /* Variable indentno is used by printTree to
  * store current number of spaces to indent
  */
-static int indentno = 0;
+static indentno = 0;
 
 /* macros to increase/decrease indentation */
 #define INDENT indentno+=2
@@ -151,7 +167,10 @@ void printTree( TreeNode * tree )
 { int i;
   INDENT;
   while (tree != NULL) {
-    if(tree->nodekind != DeclK || tree->kind.decl != TypeK) printSpaces();
+    
+    /* 11.26 출력 간격 맞춤 */
+    if(tree->nodekind != TypeK) printSpaces();
+   
     if (tree->nodekind==StmtK)
     { switch (tree->kind.stmt) {
         case IfK:
@@ -169,36 +188,8 @@ void printTree( TreeNode * tree )
         case CompK:
           fprintf(listing, "Compound statement : \n");
           break;
-        case ParamK:
-          fprintf(listing,"Single parameter, name : %s, ",tree->attr.name);
-          break;
-        case arrParamK:
-          fprintf(listing,"Array parameter, name : %s, ", tree->attr.name);
-          break;
         default:
           fprintf(listing,"Unknown ExpNode kind\n");
-          break;
-      }
-    }
-
-    /* 11월 25일 수정*/
-    else if (tree->nodekind==DeclK)
-    { switch (tree->kind.decl) {
-        case VarK:
-          fprintf(listing,"Var declaration, name : %s, ",tree->attr.name);
-          break;
-        case FunK:
-          fprintf(listing,"Function declaration, name : %s, return ",tree->attr.name);
-          break;
-        case arrVarK:
-          fprintf(listing,"VarArr declaration, name : %s, size : %d, ",tree->attr.name,tree->attr.var_size);
-          break;
-        case TypeK:
-          if(tree->attr.type == INT) fprintf(listing,"type : int\n");
-          else if(tree->attr.type == VOID) fprintf(listing,"type : void\n");
-          break;
-        default:
-          fprintf(listing,"Unknown DeclNode kind\n");
           break;
       }
     }
@@ -222,7 +213,7 @@ void printTree( TreeNode * tree )
         case IdK:
           fprintf(listing,"Id : %s\n",tree->attr.name);
           break;
-        case arrIdK:
+        case ArrIdK:
           fprintf(listing,"ArrId : %s\n",tree->attr.name);
           break;
         default:
@@ -230,7 +221,43 @@ void printTree( TreeNode * tree )
           break;
       }
     }
+    
+    /* 11월 25일 수정 Declk, ParamK 추가 */
+    else if (tree->nodekind==DeclK)
+    { switch (tree->kind.decl) {
+        case VarK:
+          fprintf(listing,"Var declaration, name : %s, ",tree->attr.name);
+          break;
+        case FunK:
+          fprintf(listing,"Function declaration, name : %s, return ",tree->attr.name);
+          break;
+        case ArrVarK:
+          fprintf(listing,"VarArr declaration, name : %s, size : %d, ",tree->attr.name,tree->attr.var_size);
+          break;
+        case TypeK:
+          if(tree->attr.type == INT) fprintf(listing,"type : int\n");
+          else if(tree->attr.type == VOID) fprintf(listing,"type : void\n");
+          break;
+        default:
+          fprintf(listing,"Unknown DeclNode kind\n");
+          break;
+      }
+    }
 
+    else if (tree->nodekind==ParamK)
+    { switch (tree->kind.param) {
+        case SingleParamK:
+          fprintf(listing,"Single parameter, name : %s, ",tree->attr.name);
+          break;
+        case ArrParamK:
+          printf(listing,"Array parameter, name : %s, ", tree->attr.name);
+          break;
+        default:
+          fprintf(listing,"Unknown ParamNode kind\n");
+          break;
+      }
+    }
+    
     else fprintf(listing,"Unknown node kind\n");
     for (i=0;i<MAXCHILDREN;i++)
          printTree(tree->child[i]);
