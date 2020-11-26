@@ -23,6 +23,8 @@ static TreeNode * savedTree; /* stores syntax tree for later return */
 
 /* 에러 방지용으로 추가 */
 static int yylex(void);
+int yyerror(char * message);
+
 
 %}
 
@@ -135,12 +137,12 @@ param_empty         : type_specifier {
 param               : type_specifier identifier {
                         $$ = newStmtNode(ParamK);
                         $$->attr.name = savedName;
-                        $$->child[0] = $1
+                        $$->child[0] = $1;
                       }
 			              | type_specifier identifier LBRACE RBRACE {
                         $$ = newStmtNode(arrParamK);
                         $$->attr.name = savedName;
-                        $$->child[0] = $1
+                        $$->child[0] = $1;
                       }
                     ;
 
