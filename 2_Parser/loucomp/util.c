@@ -220,7 +220,7 @@ void printTree( TreeNode * tree )
     else if (tree->nodekind==DeclK)
     { switch (tree->kind.decl) {
         case VarK:
-          fprintf(listing,"Var declaration, name : %s, ",tree->attr.name);
+          fprintf(listing,"Var declaration, name : %s, type : %s\n ",tree->attr.name,tree->attr.type);
           break;
         case FunK:
           fprintf(listing,"Function declaration, name : %s, return type :%s\n",tree->attr.name, tree->attr.type);
