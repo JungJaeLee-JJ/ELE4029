@@ -188,7 +188,7 @@ local_declarations	: local_declarations var_declaration {
                     | {$$ = NULL;}
                     ;
 
-selection_stmt		  : IF LPAREN expression RPAREN statement {
+selection_stmt		  : IF LPAREN expression RPAREN statement %prec NO_ELSE {
                         $$ = newStmtNode(IfK);
                         $$->child[0] = $3;
                         $$->child[1] = $5;
