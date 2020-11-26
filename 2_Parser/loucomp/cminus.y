@@ -28,7 +28,7 @@ int yyerror(char * message);
 
 %}
 
-/* 11.25 */
+/* 11.25 shift reduce comflict 해결 */
 %nonassoc NO_ELSE
 %nonassoc ELSE
 
@@ -226,14 +226,10 @@ return_stmt		      : RETURN SEMI {
                     }
                     ;
 
-expression		      : var {
+expression		      : var ASSIGN expression {
                         $$ = newExpNode(AssignK);
-                        $$->attr.name = savedName;
-                      }
-                    ASSIGN expression {
-                        $$ = $2;
                         $$->child[0] = $1;
-                        $$->child[1] = $4;
+                        $$->child[1] = $3;
                       }
                     | simple_expression { $$ = $1; }
                     ;
