@@ -68,7 +68,7 @@ var_decl    : type_spec saveName SEMI
                    $$->lineno = lineno;
                    $$->attr.name = savedName;
                  }
-            | type_spec saveName LBRACE saveNumber RBRACE SEMI
+            | type_spec saveName LBRACE NUM RBRACE SEMI
                  { $$ = newDeclNode(ArrVarK);
                    $$->child[0] = $1;
                    $$->lineno = lineno;
