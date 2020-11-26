@@ -14,12 +14,15 @@
 
 #define YYSTYPE TreeNode *
 static char * savedName; /* for use in assignments */
+
+/* 11.25 추가 */
 static int savedNumber;
+
 static int savedLineNo;  /* ditto */
 static TreeNode * savedTree; /* stores syntax tree for later return */
+
+/* 에러 방지용으로 추가 */
 static int yylex(void);
-int yyerror(char * message);
-static char * savedType;
 
 %}
 
@@ -32,19 +35,18 @@ static char * savedType;
 %% /* Grammar for TINY */
 /* 11.25  modify code like BNF Grammar */
 
-program             : declaration_list
-                        { savedTree = $1;} 
+program             : declaration_list { savedTree = $1;} 
                     ;
 
-declaration_list    : declaration_list declaration
-                        { YYSTYPE t = $1;
-                          if (t != NULL)
-                          { while (t->sibling != NULL)
-                                t = t->sibling;
-                            t->sibling = $2;
-                            $$ = $1; }
-                            else $$ = $2;
+declaration_list    : declaration_list declaration { 
+                        YYSTYPE t = $1;
+                        if (t != NULL) { 
+                          while (t->sibling != NULL)t = t->sibling;
+                          t->sibling = $2;
+                          $$ = $1; 
                         }
+                        else $$ = $2;
+                      }
                     | declaration  { $$ = $1; }
                     ;
                 
@@ -74,19 +76,24 @@ var_declaration	    : type_specifier identifier SEMI {
                         $$ = newDeclNode(arrVarK);
                         $$->child[0] = $1;
                         $$->lineno = lineno;
-                        $$->attr.name = savedName;
-                        $$->attr.size = savedNumber;
+                        $$->attr.var_name = savedName;
+                        $$->attr.var_size = savedNumber;
                       }
 			              ;
 
-type_specifier		  : INT { savedType = copyString(tokenString);}
-                    | VOID { savedType = copyString(tokenString);}
+type_specifier		  : INT { 
+                        $$ = newDeclNode(TypeK);
+                        $$->attr.type = INT;
+                      }
+                    | VOID { 
+                        $$ = newDeclNode(TypeK);
+                        $$->attr.type = VOID;
+                      }
                     ;
 
 fun_declaration     : type_specifier identifier {
                         $$ = newDeclNode(FunK);
                         $$->attr.name = savedName;
-                        $$->attr.type = savedType;
                       }
                       LPAREN params RPAREN compound_stmt {
                         $$ = $3;
@@ -114,27 +121,26 @@ param_list		      : param_list COMMA param {
                     ;
 
 
-param_empty         : VOID {
+param_empty         : type_specifier {
                         $$ = newStmtNode(ParamK);
-                        $$->attr.name = "(null)";
-                        $$->attr.type = "void";
+                        $$->child[0] = $1;
+                        $$->attr.name = copyString("(null)");
                       }
                     | {
                         $$ = newStmtNode(ParamK);
-                        $$->attr.name = "(null)";
-                        $$->attr.type = "void";
+                        $$->attr.name = copyString("(null)");
                       }
                     ;
 
 param               : type_specifier identifier {
                         $$ = newStmtNode(ParamK);
                         $$->attr.name = savedName;
-                        $$->attr.type = savedType;
+                        $$->child[0] = $1
                       }
 			              | type_specifier identifier LBRACE RBRACE {
                         $$ = newStmtNode(arrParamK);
                         $$->attr.name = savedName;
-                        $$->attr.type = savedType;
+                        $$->child[0] = $1
                       }
                     ;
 

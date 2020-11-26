@@ -65,7 +65,7 @@ extern int lineno; /* source line number for listing */
 
 typedef enum {StmtK,DeclK,ExpK} NodeKind;
 
-typedef enum {VarK,FunK,arrVarK} DeclKind;
+typedef enum {VarK,FunK,arrVarK,TypeK} DeclKind;
 typedef enum {IfK,IfEK,WhileK,ReturnK,CompK,ParamK,arrParamK} StmtKind;
 typedef enum {AssignK,OpK,ConstK,CallK,IdK,arrIdK} ExpKind;
 
@@ -91,7 +91,8 @@ typedef struct treeNode
         
         // 11.25 추가
         char * type;
-        int size;
+        char * val_name;
+        int var_size;
 
         int val;
         char * name; 
