@@ -52,25 +52,25 @@ declaration         : var_declaration { $$ = $1; }
                     | fun_declaration { $$ = $1; }
                     ;
 
-saveName            : ID {
+identifier          : ID {
                         savedName = copyString(tokenString);
                         savedLineNo = lineno;
                       }
                     ;
 
-saveNumber          : NUM {
+number_token        : NUM {
                         savedNumber = atoi(tokenString);
                         savedLineNo = lineno;
                       }
                     ;
 
-var_declaration	    : type_specifier saveName SEMI {
+var_declaration	    : type_specifier identifier SEMI {
                         $$ = newDeclNode(VarK);
                         $$->child[0] = $1;
                         $$->lineno = lineno;
                         $$->attr.name = savedName;
                       }
-			              | type_specifier saveName LBRACE NUM RBRACE SEMI {
+			              | type_specifier identifier LBRACE NUM RBRACE SEMI {
                         $$ = newDeclNode(arrVarK);
                         $$->child[0] = $1;
                         $$->lineno = lineno;
@@ -83,7 +83,7 @@ type_specifier		  : INT { savedType = copyString(tokenString);}
                     | VOID { savedType = copyString(tokenString);}
                     ;
 
-fun_declaration     : type_specifier saveName {
+fun_declaration     : type_specifier identifier {
                         $$ = newDeclNode(FunK);
                         $$->attr.name = savedName;
                         $$->attr.type = savedType;
@@ -126,12 +126,12 @@ param_empty         : VOID {
                       }
                     ;
 
-param               : type_specifier saveName {
+param               : type_specifier identifier {
                         $$ = newStmtNode(ParamK);
                         $$->attr.name = savedName;
                         $$->attr.type = savedType;
                       }
-			              | type_specifier saveName LBRACE RBRACE {
+			              | type_specifier identifier LBRACE RBRACE {
                         $$ = newStmtNode(arrParamK);
                         $$->attr.name = savedName;
                         $$->attr.type = savedType;
@@ -224,11 +224,11 @@ expression		      : var ASSIGN expression {
                     | simple_expression { $$ = $1; }
                     ;
 
-var			            : saveName {
+var			            : identifier {
                         $$ = newExpNode(IdK);
                         $$->attr.name = savedName;
                       }
-                    | saveName {
+                    | identifier {
                         $$ = newExpNode(arrIdK);
                         $$->attr.name = savedName;
                       }
@@ -311,13 +311,13 @@ term                : term TIMES factor {
 factor              : LPAREN expression RPAREN { $$ = $2; }
                     | var { $$ = $1; }
                     | call { $$ = $1; }
-                    | savedNumber { 
+                    | number_token { 
                         $$ = newExpNode(ConstK);
                         $$->attr.val = atoi(tokenString);
                       }
                     ;
 
-call                : saveName { 
+call                : identifier { 
                         $$ = newExpNode(CallK);
                         $$->attr.name = savedName;
                       }
