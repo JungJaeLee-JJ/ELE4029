@@ -72,8 +72,8 @@ var_decl    : type_spec saveName SEMI
                  { $$ = newDeclNode(ArrVarK);
                    $$->child[0] = $1;
                    $$->lineno = lineno;
-                   $$->attr.arr.name = savedName;
-                   $$->attr.arr.size = savedNumber;
+                   $$->attr.name = savedName;
+                   $$->attr.var_size = savedNumber;
                  }
             ;            
 type_spec   : INT
@@ -176,17 +176,17 @@ sel_stmt    : IF LPAREN exp RPAREN stmt %prec NO_ELSE
                  }
             ;
 iter_stmt   : WHILE LPAREN exp RPAREN stmt
-                 { $$ = newStmtNode(IterK);
+                 { $$ = newStmtNode(WhileK);
                    $$->child[0] = $3;
                    $$->child[1] = $5;
                  }
             ;
 ret_stmt    : RETURN SEMI
-                 { $$ = newStmtNode(RetK);
+                 { $$ = newStmtNode(ReturnK);
                    $$->child[0] = NULL;
                  }
             | RETURN exp SEMI
-                 { $$ = newStmtNode(RetK);
+                 { $$ = newStmtNode(ReturnK);
                    $$->child[0] = $2;
                  }
             ;
