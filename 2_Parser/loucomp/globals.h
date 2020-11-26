@@ -89,9 +89,9 @@ typedef struct treeNode
      union { 
         TokenType op;
         
-        // 11.25 추가
+        /* 11.25 추가 */
         TokenType * type;
-        char * val_name;
+        char * var_name;
         int var_size;
 
         int val;
