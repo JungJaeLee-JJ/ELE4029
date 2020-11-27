@@ -231,7 +231,7 @@ void printTree( TreeNode * tree )
           fprintf(listing,"Function declaration, name : %s, return ", tree->attr.name);
           break;
         case ArrVarK:
-          fprintf(listing,"VarArr declaration, name : %s, size : %d, ", tree->attr.arr_name, tree->attr.arr_size);
+          fprintf(listing,"VarArr declaration, name : %s, size : %d, ", tree->attr.arr.name, tree->attr.arr.size);
           break;
         case TypeK:
           if(tree->attr.type == INT) fprintf(listing,"type : int\n");
