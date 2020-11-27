@@ -73,8 +73,8 @@ var_declaration	    : type_specifier identifier SEMI {
 			              | type_specifier identifier LBRACE num RBRACE SEMI {
                         $$ = newDeclNode(ArrVarK);
                         $$->child[0] = $1;
-                        $$->attr.arr.name = savedName;
-                        $$->attr.arr.size = savedNumber;
+                        $$->attr.arr_name = savedName;
+                        $$->attr.arr_size = savedNumber;
                       }
 			              ;          
 
