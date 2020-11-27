@@ -59,26 +59,20 @@ declaration         : var_declaration { $$ = $1; }
                     | fun_declaration { $$ = $1; }
                     ;
 
-identifier          : ID { savedName = copyString(tokenString);
-                            $$->lineno = lineno;
-                         }
+identifier          : ID { savedName = copyString(tokenString); }
                     ;
 
-num                 : NUM { savedNumber = atoi(tokenString); 
-                            $$->lineno = lineno;
-                    }
+num                 : NUM { savedNumber = atoi(tokenString); }
                     ;
 
 var_declaration	    : type_specifier identifier SEMI {
                         $$ = newDeclNode(VarK);
                         $$->child[0] = $1;
-                        $$->lineno = lineno;
                         $$->attr.name = savedName;
                       }
 			              | type_specifier identifier LBRACE num RBRACE SEMI {
                         $$ = newDeclNode(ArrVarK);
                         $$->child[0] = $1;
-                        $$->lineno = lineno;
                         $$->attr.arr.name = savedName;
                         $$->attr.arr.size = savedNumber;
                       }
