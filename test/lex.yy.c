@@ -387,11 +387,11 @@ struct yy_trans_info
 static yyconst flex_int16_t yy_accept[57] =
     {   0,
         0,    0,   33,   31,   29,   28,   31,   18,   19,   16,
-       14,   25,   15,   17,   26,   24,   10,    7,   12,   27,
-       20,   21,   27,   27,   27,   27,   27,   22,   23,   29,
-        9,   30,   26,   11,    8,   13,   27,   27,    1,   27,
-       27,   27,   27,   27,    5,   27,   27,   27,    2,   27,
-        6,   27,   27,    3,    4,    0
+       14,   25,   15,   17,   26,   24,    9,    7,   10,   27,
+       22,   23,   27,   27,   27,   27,   27,   20,   21,   29,
+       13,   30,   26,   11,    8,   12,   27,   27,    1,   27,
+       27,   27,   27,   27,    3,   27,   27,   27,    2,   27,
+        5,   27,   27,    6,    4,    0
     } ;
 
 static yyconst YY_CHAR yy_ec[256] =
@@ -802,7 +802,7 @@ YY_RULE_SETUP
 case 3:
 YY_RULE_SETUP
 #line 27 "cminus.l"
-{return WHILE;}
+{return INT;}
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
@@ -812,12 +812,12 @@ YY_RULE_SETUP
 case 5:
 YY_RULE_SETUP
 #line 29 "cminus.l"
-{return INT;}
+{return VOID;}
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
 #line 30 "cminus.l"
-{return VOID;}
+{return WHILE;}
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
@@ -832,12 +832,12 @@ YY_RULE_SETUP
 case 9:
 YY_RULE_SETUP
 #line 33 "cminus.l"
-{return NE;}
+{return LT;}
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
 #line 34 "cminus.l"
-{return LT;}
+{return GT;}
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
@@ -847,12 +847,12 @@ YY_RULE_SETUP
 case 12:
 YY_RULE_SETUP
 #line 36 "cminus.l"
-{return GT;}
+{return GE;}
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
 #line 37 "cminus.l"
-{return GE;}
+{return NE;}
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
@@ -887,22 +887,22 @@ YY_RULE_SETUP
 case 20:
 YY_RULE_SETUP
 #line 44 "cminus.l"
-{return LBRACE;}
+{return LCURLY;}
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
 #line 45 "cminus.l"
-{return RBRACE;}
+{return RCURLY;}
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
 #line 46 "cminus.l"
-{return LCURLY;}
+{return LBRACE;}
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
 #line 47 "cminus.l"
-{return RCURLY;}
+{return RBRACE;}
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
@@ -939,28 +939,27 @@ case 30:
 YY_RULE_SETUP
 #line 54 "cminus.l"
 { char c;
-                  int flag = 0;
+                  char prev = '\0';
                   do
                   { c = input();
                     if (c == EOF) break;
                     if (c == '\n') lineno++;
-                    if (flag==1 && c =='/') break;
-                    if (c == '*') flag = 1;
-                    else flag = 0;
+                    if (prev == '*' && c == '/') break;
+                    prev = c;
                   } while (1);
                 }
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 65 "cminus.l"
+#line 64 "cminus.l"
 {return ERROR;}
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 67 "cminus.l"
+#line 66 "cminus.l"
 ECHO;
 	YY_BREAK
-#line 964 "lex.yy.c"
+#line 963 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1961,7 +1960,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 67 "cminus.l"
+#line 66 "cminus.l"
 
 
 

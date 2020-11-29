@@ -45,67 +45,67 @@ extern int yydebug;
 # define YYTOKENTYPE
   enum yytokentype
   {
-    NO_ELSE = 258,
+    IF = 258,
     ELSE = 259,
-    ERROR = 260,
-    IF = 261,
-    WHILE = 262,
-    RETURN = 263,
-    INT = 264,
-    VOID = 265,
-    ID = 266,
-    NUM = 267,
-    ASSIGN = 268,
-    EQ = 269,
-    NE = 270,
-    LT = 271,
-    LE = 272,
-    GT = 273,
-    GE = 274,
-    PLUS = 275,
-    MINUS = 276,
-    TIMES = 277,
-    OVER = 278,
-    LPAREN = 279,
-    RPAREN = 280,
-    LBRACE = 281,
-    RBRACE = 282,
-    LCURLY = 283,
-    RCURLY = 284,
-    SEMI = 285,
-    COMMA = 286
+    WHILE = 260,
+    RETURN = 261,
+    INT = 262,
+    VOID = 263,
+    ID = 264,
+    NUM = 265,
+    ASSIGN = 266,
+    EQ = 267,
+    NE = 268,
+    LT = 269,
+    LE = 270,
+    GT = 271,
+    GE = 272,
+    PLUS = 273,
+    MINUS = 274,
+    TIMES = 275,
+    OVER = 276,
+    LPAREN = 277,
+    RPAREN = 278,
+    LBRACE = 279,
+    RBRACE = 280,
+    LCURLY = 281,
+    RCURLY = 282,
+    SEMI = 283,
+    COMMA = 284,
+    ERROR = 285,
+    NO_ELSE = 286
   };
 #endif
 /* Tokens.  */
-#define NO_ELSE 258
+#define IF 258
 #define ELSE 259
-#define ERROR 260
-#define IF 261
-#define WHILE 262
-#define RETURN 263
-#define INT 264
-#define VOID 265
-#define ID 266
-#define NUM 267
-#define ASSIGN 268
-#define EQ 269
-#define NE 270
-#define LT 271
-#define LE 272
-#define GT 273
-#define GE 274
-#define PLUS 275
-#define MINUS 276
-#define TIMES 277
-#define OVER 278
-#define LPAREN 279
-#define RPAREN 280
-#define LBRACE 281
-#define RBRACE 282
-#define LCURLY 283
-#define RCURLY 284
-#define SEMI 285
-#define COMMA 286
+#define WHILE 260
+#define RETURN 261
+#define INT 262
+#define VOID 263
+#define ID 264
+#define NUM 265
+#define ASSIGN 266
+#define EQ 267
+#define NE 268
+#define LT 269
+#define LE 270
+#define GT 271
+#define GE 272
+#define PLUS 273
+#define MINUS 274
+#define TIMES 275
+#define OVER 276
+#define LPAREN 277
+#define RPAREN 278
+#define LBRACE 279
+#define RBRACE 280
+#define LCURLY 281
+#define RCURLY 282
+#define SEMI 283
+#define COMMA 284
+#define ERROR 285
+#define NO_ELSE 286
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED

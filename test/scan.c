@@ -11,9 +11,7 @@
 
 /* states in scanner DFA */
 typedef enum
-  /* 10.18 수정*/
-  /*{ START,INASSIGN,INCOMMENT,INNUM,INID,DONE }*/
-   { START,INEQ,INCOMMENT,INNUM,INID,DONE,INLT,INGT,INNE,INOVER,INCOMMENT_}
+   { START,INEQ,INCOMMENT,INNUM,INID,DONE,INLT,INGT,INNE,INOVER,INCOMMENT_ }
    StateType;
 
 /* lexeme of identifier or reserved word */
@@ -58,13 +56,11 @@ static struct
     { char* str;
       TokenType tok;
     } reservedWords[MAXRESERVED]
-    /* 10.18 수정*/
-    /*
-   = {{"if",IF},{"then",THEN},{"else",ELSE},{"end",END},
+   = {{"if",IF},{"else",ELSE},{"while",WHILE},{"return",RETURN},{"int",INT},{"void",VOID},
+      /* discarded */
+      {"then",THEN},{"end",END},
       {"repeat",REPEAT},{"until",UNTIL},{"read",READ},
       {"write",WRITE}};
-    */
-    = {{"if",IF},{"else",ELSE},{"while",WHILE},{"return",RETURN},{"int",INT},{"void",VOID}};
 
 /* lookup an identifier to see if it is a reserved word */
 /* uses linear search */
@@ -100,13 +96,20 @@ TokenType getToken(void)
            state = INNUM;
          else if (isalpha(c))
            state = INID;
+         else if (c == '=')
+           state = INEQ;
          else if ((c == ' ') || (c == '\t') || (c == '\n'))
            save = FALSE;
-         else if (c == '<') state = INLT;
-         else if (c == '>') state = INGT;
-         else if (c == '=') state = INEQ;
-         else if (c == '!') state = INNE;
-         else if (c == '/'){ save = FALSE; state = INOVER; }
+         else if (c == '!')
+           state = INNE;
+         else if (c == '<')
+           state = INLT;
+         else if (c == '>')
+           state = INGT;
+         else if (c == '/')
+         { save = FALSE;
+           state = INOVER;
+         }
          else
          { state = DONE;
            switch (c)
@@ -160,79 +163,72 @@ TokenType getToken(void)
          }
          break;
        case INOVER:
-        // /* */ 처리
-        if (c == '*')
-        {
-          state = INCOMMENT;
-          save = FALSE;
-        }
-        else
-        {
-          // /일때 * 가 아니라면 OVER
-          state = DONE;
-          ungetNextChar();
-          currentToken = OVER;
-        }
-        break;
+         if (c == '*')
+         { state = INCOMMENT;
+           save = FALSE;
+         }
+         else
+         { state = DONE;
+           ungetNextChar();
+           currentToken = OVER;
+         }
        case INCOMMENT:
+         //printf("%c.",c);
          save = FALSE;
          if (c == EOF)
          { state = DONE;
            currentToken = ENDFILE;
          }
-         /* INCOMMENT_ 는 INCOMMENT 상태에서 *가 나왔을때 */
          else if (c == '*') state = INCOMMENT_;
          break;
-      case INCOMMENT_:
+       case INCOMMENT_:
+         //printf("%c'", c);
          save = FALSE;
-         if(c == EOF)
-         {
-           state = DONE;
+         if (c == EOF)
+         { state = DONE;
            currentToken = ENDFILE;
          }
-         /* INCOMMENT_ 에서 /들어오면 주석 끝, 아니면 주석 계속 */
          else if (c == '/') state = START;
-         else if (c =='*') state = INCOMMENT_;
+         else if (c == '*') state = INCOMMENT_;
          else state = INCOMMENT;
          break;
-       case INLT:
+       case INLT:     // '<'
          state = DONE;
-         if(c == '=') currentToken = LE;
+         if (c == '=')
+           currentToken = LE;
          else
-         {
-           ungetNextChar();
+         { ungetNextChar();
            currentToken = LT;
-         }
+         }  
          break;
-       case INGT:
+       case INGT:     // '>'
          state = DONE;
-         if(c == '=') currentToken = GE;
+         if (c == '=')
+           currentToken = GE;
          else
-         {
-           ungetNextChar();
+         { ungetNextChar();
            currentToken = GT;
          }
          break;
-       case INEQ:
+       case INEQ:     // '='
          state = DONE;
-         if(c == '=') currentToken = EQ;
+         if (c == '=')
+           currentToken = EQ;
          else
-         {
-           ungetNextChar();
+         { ungetNextChar();
            currentToken = ASSIGN;
          }
          break;
-       case INNE:
+       case INNE:     // '='
          state = DONE;
-         if(c == '=') currentToken = NE;
+         if (c == '=')
+           currentToken = NE;
          else
-         {
-           ungetNextChar();
+         { ungetNextChar();
            save = FALSE;
            currentToken = ERROR;
          }
          break;
-
        case INNUM:
          if (!isdigit(c))
          { /* backup in the input */
@@ -272,3 +268,4 @@ TokenType getToken(void)
    }
    return currentToken;
 } /* end getToken */
+
