@@ -74,12 +74,11 @@ typedef enum {Void,Integer} ExpType;
 
 #define MAXCHILDREN 3
 
-/* ArrayAttr is used for attributes of array variable */
-typedef struct arrayAttr
+typedef struct arr_info
    { TokenType type;
      char * name;
      int size;
-   } ArrayAttr;
+   } Arr_info;
 
 typedef struct treeNode
    { struct treeNode * child[MAXCHILDREN];
@@ -99,7 +98,8 @@ typedef struct treeNode
         
         /* 11.25 추가 */
         TokenType * type;
-        ArrayAttr arr; 
+        /* 11.29 추가 */
+        Arr_info arr; 
         int val;
         char * name; 
       } attr;
