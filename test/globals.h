@@ -70,6 +70,11 @@ typedef enum {ArrParamK,NonArrParamK} ParamKind;
 typedef enum {TypeNameK} TypeKind;
 
 /* ArrayAttr is used for attributes of array variable */
+typedef struct arrayAttr
+   { TokenType type;
+     char * name;
+     int size;
+   } ArrayAttr;
 
 /* ExpType is used for type checking */
 typedef enum {Void,Integer} ExpType;
@@ -86,15 +91,11 @@ typedef struct treeNode
              DeclKind decl;
              ParamKind param;
              TypeKind type; } kind;
-     union { 
-              TokenType op;
+     union { TokenType op;
              TokenType type;
              int val;
              char * name;
-             char * arr_name;
-             int arr_size;
-
-             } attr;
+             ArrayAttr arr; } attr;
      ExpType type; /* for type checking of exps */
    } TreeNode;
 

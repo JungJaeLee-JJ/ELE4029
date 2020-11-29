@@ -72,8 +72,8 @@ var_decl    : type_spec saveName SEMI
                  { $$ = newDeclNode(ArrVarK);
                    $$->child[0] = $1;
                    $$->lineno = lineno;
-                   $$->attr.arr_name = savedName;
-                   $$->attr.arr_size = savedNumber;
+                   $$->attr.arr.name = savedName;
+                   $$->attr.arr.size = savedNumber;
                  }
             ;            
 type_spec   : INT

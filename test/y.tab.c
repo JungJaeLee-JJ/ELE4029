@@ -1412,8 +1412,8 @@ yyreduce:
     { (yyval) = newDeclNode(ArrVarK);
                    (yyval)->child[0] = (yyvsp[-5]);
                    (yyval)->lineno = lineno;
-                   (yyval)->attr.arr_name = savedName;
-                   (yyval)->attr.arr_size = savedNumber;
+                   (yyval)->attr.arr.name = savedName;
+                   (yyval)->attr.arr.size = savedNumber;
                  }
 #line 1419 "y.tab.c" /* yacc.c:1646  */
     break;
