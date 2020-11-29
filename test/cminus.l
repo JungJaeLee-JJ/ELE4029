@@ -24,41 +24,42 @@ whitespace  [ \t]+
 
 "if"            {return IF;}
 "else"          {return ELSE;}
-"int"           {return INT;}
-"return"        {return RETURN;}
-"void"          {return VOID;}
 "while"         {return WHILE;}
+"return"        {return RETURN;}
+"int"           {return INT;}
+"void"          {return VOID;}
 "="             {return ASSIGN;}
 "=="            {return EQ;}
-"<"             {return LT;}
-">"             {return GT;}
-"<="            {return LE;}
-">="            {return GE;}
 "!="            {return NE;}
+"<"             {return LT;}
+"<="            {return LE;}
+">"             {return GT;}
+">="            {return GE;}
 "+"             {return PLUS;}
 "-"             {return MINUS;}
 "*"             {return TIMES;}
 "/"             {return OVER;}
 "("             {return LPAREN;}
 ")"             {return RPAREN;}
-"{"             {return LCURLY;}
-"}"             {return RCURLY;}
 "["             {return LBRACE;}
 "]"             {return RBRACE;}
+"{"             {return LCURLY;}
+"}"             {return RCURLY;}
 ";"             {return SEMI;}
 ","             {return COMMA;}
 {number}        {return NUM;}
 {identifier}    {return ID;}
 {newline}       {lineno++;}
 {whitespace}    {/* skip whitespace */}
-"/*"             { char c;
-                  char prev = '\0';
+"/*"            { char c;
+                  int flag = 0;
                   do
                   { c = input();
                     if (c == EOF) break;
                     if (c == '\n') lineno++;
-                    if (prev == '*' && c == '/') break;
-                    prev = c;
+                    if (flag==1 && c =='/') break;
+                    if (c == '*') flag = 1;
+                    else flag = 0;
                   } while (1);
                 }
 .               {return ERROR;}

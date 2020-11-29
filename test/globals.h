@@ -62,12 +62,19 @@ extern int lineno; /* source line number for listing */
 /***********   Syntax tree for parsing ************/
 /**************************************************/
 
-typedef enum {StmtK,ExpK,DeclK,ParamK} NodeKind;
+typedef enum {StmtK,ExpK,DeclK,ParamK,TypeK} NodeKind;
+typedef enum {CompK,IfK,IfEK,IterK,RetK} StmtKind;
+typedef enum {AssignK,OpK,ConstK,IdK,ArrIdK,CallK} ExpKind;
+typedef enum {FuncK,VarK,ArrVarK} DeclKind;
+typedef enum {ArrParamK,NonArrParamK} ParamKind;
+typedef enum {TypeNameK} TypeKind;
 
-typedef enum {VarK,FunK,ArrVarK,TypeK} DeclKind;
-typedef enum {IfK,IfEK,WhileK,ReturnK,CompK} StmtKind;
-typedef enum {AssignK,OpK,ConstK,CallK,IdK,ArrIdK} ExpKind;
-typedef enum {SingleParamK,ArrParamK} ParamKind;
+/* ArrayAttr is used for attributes of array variable */
+typedef struct arrayAttr
+   { TokenType type;
+     char * name;
+     int size;
+   } ArrayAttr;
 
 /* ExpType is used for type checking */
 typedef enum {Void,Integer} ExpType;
@@ -79,26 +86,16 @@ typedef struct treeNode
      struct treeNode * sibling;
      int lineno;
      NodeKind nodekind;
-
-     union { 
-      StmtKind stmt;
-      ExpKind exp;
-      DeclKind decl;
-      ParamKind param;
-    } kind;
-
-     union { 
-        TokenType op;
-        
-        /* 11.25 추가 */
-        TokenType * type;
-        char * arr_name;
-        int arr_size;
-
-        int val;
-        char * name; 
-      } attr;
-
+     union { StmtKind stmt; 
+             ExpKind exp;
+             DeclKind decl;
+             ParamKind param;
+             TypeKind type; } kind;
+     union { TokenType op;
+             TokenType type;
+             int val;
+             char * name;
+             ArrayAttr arr; } attr;
      ExpType type; /* for type checking of exps */
    } TreeNode;
 
