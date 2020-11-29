@@ -63,7 +63,6 @@ extern int lineno; /* source line number for listing */
 /**************************************************/
 
 typedef enum {StmtK,ExpK,DeclK,ParamK} NodeKind;
-
 typedef enum {VarK,FunK,ArrVarK,TypeK} DeclKind;
 typedef enum {IfK,IfEK,WhileK,ReturnK,CompK} StmtKind;
 typedef enum {AssignK,OpK,ConstK,CallK,IdK,ArrIdK} ExpKind;
@@ -74,11 +73,10 @@ typedef enum {Void,Integer} ExpType;
 
 #define MAXCHILDREN 3
 
-typedef struct arr_info
-   { TokenType type;
+typedef struct arr_info{ 
      char * name;
      int size;
-   } Arr_info;
+} Arr_info;
 
 typedef struct treeNode
    { struct treeNode * child[MAXCHILDREN];
@@ -89,13 +87,13 @@ typedef struct treeNode
      union { 
       StmtKind stmt;
       ExpKind exp;
+      /* 11.25 추가 */
       DeclKind decl;
       ParamKind param;
     } kind;
 
      union { 
         TokenType op;
-        
         /* 11.25 추가 */
         TokenType * type;
         /* 11.29 추가 */
