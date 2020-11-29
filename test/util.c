@@ -256,7 +256,7 @@ void printTree( TreeNode * tree )
           fprintf(listing,"Var declaration, name : %s, ",tree->attr.name);
           break;
         case ArrVarK:
-          fprintf(listing,"Arr Var declaration, name : %s, size : %d, ",tree->attr.arr.name,tree->attr.arr.size);
+          fprintf(listing,"Arr Var declaration, name : %s, size : %d, ",tree->attr.arr_name,tree->attr.arr_size);
           break;
         default:
           fprintf(listing,"Unknown DeclNode kind\n");
