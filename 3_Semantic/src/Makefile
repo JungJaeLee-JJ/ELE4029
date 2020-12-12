@@ -3,7 +3,7 @@
 CC = gcc
 CFLAGS = 
 
-OBJS = y.tab.o main.o util.o lex.yy.o symtab.o code.o
+OBJS = y.tab.o main.o util.o lex.yy.o symtab.o code.o analyze.o
 
 all: cminus
 

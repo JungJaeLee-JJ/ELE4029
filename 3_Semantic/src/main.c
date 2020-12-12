@@ -40,7 +40,8 @@ FILE * code;
 int EchoSource = FALSE;
 int TraceScan = FALSE;
 int TraceParse = FALSE;
-int TraceAnalyze = FALSE;
+/* 디버깅시에만 TRUE로 제출시에는 FALSE */ 
+int TraceAnalyze = TRUE;
 int TraceCode = FALSE;
 
 int Error = FALSE;
@@ -72,11 +73,19 @@ main( int argc, char * argv[] )
   }
 #if !NO_ANALYZE
   if (! Error)
-  { if (TraceAnalyze) fprintf(listing,"\nBuilding Symbol Table...\n");
+  { 
+    /* 12.12 분석 함수 수정 */
+    if(TraceAnalyze) fprintf(listing,"\nBuilding Symbol Table...\n");
     buildSymtab(syntaxTree);
-    if (TraceAnalyze) fprintf(listing,"\nChecking Types...\n");
+    if(TraceAnalyze) fprintf(listing,"\nChecking Types...\n");
     typeCheck(syntaxTree);
-    if (TraceAnalyze) fprintf(listing,"\nType Checking Finished\n");
+    if(TraceAnalyze) fprintf(listing,"\nType Checking Finished\n");
+    if (TraceAnalyze && !Error){
+      printSymTab(listing);
+      print_Function_Table(listing);
+      print_Function_and_GlobalVariables(listing);
+      print_FunctionParameter_and_LocalVariables(listing);
+    }
   }
 #if !NO_CODE
   if (! Error)

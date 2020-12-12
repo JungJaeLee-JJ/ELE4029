@@ -69,7 +69,7 @@ typedef enum {AssignK,OpK,ConstK,CallK,IdK,ArrIdK} ExpKind;
 typedef enum {SingleParamK,ArrParamK} ParamKind;
 
 /* ExpType is used for type checking */
-typedef enum {Void,Integer} ExpType;
+typedef enum {Void,Integer, ArrayInteger} ExpType;
 
 #define MAXCHILDREN 3
 
@@ -95,7 +95,7 @@ typedef struct treeNode
      union { 
         TokenType op;
         /* 11.25 추가 */
-        TokenType * type;
+        TokenType type;
         /* 11.29 추가 */
         Arr_info arr; 
         int val;
