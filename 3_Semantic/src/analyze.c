@@ -13,8 +13,8 @@
 /* 12.12 */
 #include "util.h"
 
-ScopeList nowSC;
-ScopeList globalSC;
+ScopeList * nowSC;
+ScopeList * globalSC;
 
 /* 현재 scope 갯수 */
 int scope_index = 0;
@@ -84,7 +84,7 @@ static void insertNode( TreeNode * t )
           /* 만약 선언되지 않은 경우 에러*/
           if (st_lookup(nowSC,t->attr.name) == -1) undeclaredError(t);
            /* 선언되었다면 line number만 추가 */
-          else st_insert(nowSC,t->attr.name, t, t->lineno, nowSC->memidx);
+          else st_insert(nowSC,t->attr.name, t, t->lineno, (*nowSC)->memidx);
           break;
 
         default:
@@ -108,7 +108,7 @@ static void insertNode( TreeNode * t )
             break;
           }
 
-          st_insert(nowSC,function_name, t, t->lineno, nowSC->memidx);    
+          st_insert(nowSC,function_name, t, t->lineno, (*nowSC)->memidx);    
 
           isInScope = TRUE;
           
@@ -135,7 +135,7 @@ static void insertNode( TreeNode * t )
               t->type = ArrayInteger;
             }
             
-            if (st_lookup(nowSC, name) < 0) st_insert(nowSC,name, t, t->lineno, nowSC->memidx);    
+            if (st_lookup(nowSC, name) < 0) st_insert(nowSC,name, t, t->lineno, (*nowSC)->memidx);    
             else redefinedError(t);
           }
           break;
@@ -147,7 +147,7 @@ static void insertNode( TreeNode * t )
         if (t->child[0]->attr.type == VOID) break;
         
         if (st_lookup(nowSC, t->attr.name) == -1){ 
-          st_insert(nowSC,t->attr.name, t, t->lineno, nowSC->memidx);    
+          st_insert(nowSC,t->attr.name, t, t->lineno, (*nowSC)->memidx);    
 
           if(t->kind.param == SingleParamK) t->type = Integer;
           else t->type = ArrayInteger;
@@ -159,7 +159,7 @@ static void insertNode( TreeNode * t )
 }
 
 static void backToParent(TreeNode * t){ 
-  if (t->nodekind == StmtK && t->kind.stmt == CompK) nowSC = nowSC->parent;
+  if (t->nodekind == StmtK && t->kind.stmt == CompK) nowSC = (*nowSC)->parent;
 }
 
 
@@ -193,7 +193,7 @@ void buildSymtab(TreeNode * syntaxTree){
   function->child[1] = NULL;
   function->child[2] = comp; 
 
-  st_insert(globalSC,"input",function,0,globalSC->memidx);
+  st_insert(globalSC,"input",function,0,(*globalSC)->memidx);
 
   /* output() */
   function = newDeclNode(FunK);
@@ -218,7 +218,7 @@ void buildSymtab(TreeNode * syntaxTree){
   function->child[1] = parameter;
   function->child[2] = comp; 
 
-  st_insert(globalSC,"output",function,0,globalSC->memidx);
+  st_insert(globalSC,"output",function,0,(*globalSC)->memidx);
 
   traverse(syntaxTree,insertNode,backToParent);
 }
@@ -267,7 +267,7 @@ static void checkNode(TreeNode * t)
       switch (t->kind.stmt)
       { 
         case CompK:
-          nowSC = nowSC->parent;
+          nowSC = (*nowSC)->parent;
           break;
 
         /* if문 에러 */
