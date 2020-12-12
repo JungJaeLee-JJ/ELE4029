@@ -274,20 +274,15 @@ static void checkNode(TreeNode * t)
         /* if문 에러 */
         case IfK:
         case IfEK:
-          if (t->child[0] == NULL)
-            typeError(t,"expected expression");
-          else if (t->child[0]->type == Void)
-            typeError(t->child[0],"invalid if condition type");
+          if (t->child[0] == NULL) typeError(t,"expected expression");
+          else if (t->child[0]->type == Void) typeError(t->child[0],"invalid if condition type");
           break;
 
         /* while문 에러 */
         case WhileK:
-          if (t->child[0] == NULL)
-            typeError(t,"expected expression");
-          else if (t->child[0]->type == Void)
-            typeError(t->child[0],"invalid loop condition type");
+          if (t->child[0] == NULL) typeError(t,"expected expression");
+          else if (t->child[0]->type == Void) typeError(t->child[0],"invalid loop condition type");
           break;
-
 
         case ReturnK:
         { 
@@ -318,7 +313,7 @@ static void checkNode(TreeNode * t)
           break;
 
         case OpK:
-    
+        {
           ExpType lType, rType;
           TokenType op;
 
@@ -337,12 +332,15 @@ static void checkNode(TreeNode * t)
           else t->type = Integer;
           */
           break;
+        }
         
         case ConstK:
           t->type = Integer;
           break;
+
         case IdK:
         case ArrIdK:
+        {  
           BucketList l = bk_lookup(nowSC,t->attr.name);
           if (l == NULL) break;
 
@@ -356,9 +354,9 @@ static void checkNode(TreeNode * t)
           }
           else t->type = symbolNode->type;
           break;
-        
+        }
         case CallK:
-
+        {
           BucketList l = bk_lookup(nowSC,t->attr.name);
           TreeNode * funcNode = NULL;
           TreeNode * arg;
@@ -401,7 +399,7 @@ static void checkNode(TreeNode * t)
 
           t->type = funcNode->type;
           break;
-        
+        }
         default:
           break;
        }
@@ -423,7 +421,6 @@ static void checkNode(TreeNode * t)
           break;
       }
       break;
-
     default:
       break;
   }
