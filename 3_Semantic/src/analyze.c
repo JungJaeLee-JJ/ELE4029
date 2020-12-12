@@ -204,7 +204,7 @@ static void backToParent(TreeNode * t){
 void buildSymtab(TreeNode * syntaxTree){ 
 
   /* 12.12 global scope 생성  */
-  globalSC = &scope_create(NULL,"global");
+  globalSC = scope_create(NULL,"global");
 
   TreeNode * function;
   TreeNode * type;
