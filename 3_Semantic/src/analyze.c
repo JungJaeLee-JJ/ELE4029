@@ -117,7 +117,7 @@ static void insertNode( TreeNode * t )
         case ArrIdK:
         case CallK:
           /* 만약 선언되지 않은 경우 에러*/
-          if (st_lookup(nowSC,t->attr.name) == -1) undeclaredError(t);
+          if (st_lookup(nowSC,t->attr.name) == -1) undefinedError(t);
            /* 선언되었다면 line number만 추가 */
           else st_insert(nowSC,t->attr.name, t, t->lineno, (*nowSC)->memidx);
           break;
@@ -194,7 +194,7 @@ static void insertNode( TreeNode * t )
 }
 
 static void backToParent(TreeNode * t){ 
-  if (t->nodekind == StmtK && t->kind.stmt == CompK) nowSC = (*nowSC)->parent;
+  if (t->nodekind == StmtK && t->kind.stmt == CompK) nowSC = &(*nowSC)->parent;
 }
 
 
@@ -204,7 +204,7 @@ static void backToParent(TreeNode * t){
 void buildSymtab(TreeNode * syntaxTree){ 
 
   /* 12.12 global scope 생성  */
-  globalSC = scope_create(NULL,"global");
+  globalSC = &scope_create(NULL,"global");
 
   TreeNode * function;
   TreeNode * type;
@@ -268,7 +268,7 @@ static void checkNode(TreeNode * t)
       switch (t->kind.stmt)
       { 
         case CompK:
-          nowSC = (*nowSC)->parent;
+          nowSC = &(*nowSC)->parent;
           break;
 
         /* if문 에러 */
