@@ -35,9 +35,9 @@ static int hash ( char * key )
 }
 
 
-void st_insert( char * scope, char * name, TreeNode * node, int lineno, int loc ){ 
+void st_insert( ScopeList * scope, char * name, TreeNode * node, int lineno, int loc ){ 
   int h = hash(name);
-  ScopeList nowSC = (ScopeList) scope;
+  ScopeList nowSC = *scope;
   BucketList l =  nowSC->bucket[h];
 
   /* Bucket list 순회 */
@@ -75,9 +75,9 @@ void st_insert( char * scope, char * name, TreeNode * node, int lineno, int loc 
 /* Function st_lookup returns the memory 
  * location of a variable or -1 if not found
  */
-int st_lookup ( char* scope, char * name ){ 
+int st_lookup ( ScopeList * scope, char * name ){ 
   int h = hash(name);
-  ScopeList nowSC = (ScopeList) scope;
+  ScopeList nowSC = *scope;
   while (nowSC != NULL){
     BucketList l =  nowSC->bucket[h];
     while ((l != NULL) && (strcmp(name,l->name) != 0)) l = l->next;
@@ -87,7 +87,21 @@ int st_lookup ( char* scope, char * name ){
   return -1; 
 }
 
-ScopeList scope_create (char* scope, char * name){
+BucketList bk_lookup ( ScopeList * scope, char * name ){ 
+  int h = hash(name);
+  ScopeList nowSC = *scope;
+  while (nowSC != NULL){
+    BucketList l =  nowSC->bucket[h];
+    while ((l != NULL) && (strcmp(name,l->name) != 0)) l = l->next;
+    if (l != NULL) return l;
+    nowSC = nowSC -> parent;
+  }
+  return NULL; 
+}
+
+ScopeList scope_create ( ScopeList * scope, char * name){
+  ScopeList nowSC = *scope;
+  
   /* 스코프 생성 */
   ScopeList newSC;
   newSC = (ScopeList)malloc(sizeof(struct ScopeListRec));
