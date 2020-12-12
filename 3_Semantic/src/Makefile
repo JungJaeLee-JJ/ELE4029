@@ -16,7 +16,7 @@ y.tab.o: cminus.l globals.h util.h scan.h parse.h
 
 y.tab.h: y.tab.c
 
-main.o: main.c globals.h y.tab.h util.h scan.h parse.h analyze.h cgen.h
+main.o: main.c globals.h y.tab.h util.h scan.h parse.h analyze.h
 	$(CC) $(CFLAGS) -c main.c
 
 util.o: util.c util.h globals.h y.tab.h
@@ -33,12 +33,6 @@ symtab.o: symtab.c symtab.h
 
 analyze.o: analyze.c globals.h y.tab.h symtab.h analyze.h
 	$(CC) $(CFLAGS) -c analyze.c
-
-code.o: code.c code.h globals.h y.tab.h
-	$(CC) $(CFLAGS) -c code.c
-
-cgen.o: cgen.c globals.h y.tab.h symtab.h code.h cgen.h
-	$(CC) $(CFLAGS) -c cgen.c
 
 clean:
 	rm -vf $(OBJS) lex.yy.c y.tab.h y.tab.c cminus
