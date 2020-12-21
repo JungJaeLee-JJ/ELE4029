@@ -128,6 +128,22 @@ TreeNode * newParamNode(ParamKind kind)
   return t;
 }
 
+/* 추가 */
+TreeNode * newTypeNode(TypeKind kind)
+{ TreeNode * t = (TreeNode *) malloc(sizeof(TreeNode));
+  int i;
+  if (t==NULL)
+    fprintf(listing,"Out of memory error at line %d\n",lineno);
+  else
+  { for (i=0;i<MAXCHILDREN;i++) t->child[i] = NULL;
+    t->sibling = NULL;
+    t->nodekind = TypeK;
+    t->kind.type = kind;
+    t->lineno = lineno;
+  }
+  return t;
+}
+
 
 /* Function copyString allocates and makes a new
  * copy of an existing string
@@ -233,10 +249,6 @@ void printTree( TreeNode * tree )
         case ArrVarK:
           fprintf(listing,"VarArr declaration, name : %s, size : %d, ", tree->attr.arr.name, tree->attr.arr.size);
           break;
-        case TypeK:
-          if(tree->attr.type == INT) fprintf(listing,"type : int\n");
-          else if(tree->attr.type == VOID) fprintf(listing,"type : void\n");
-          break;
         default:
           fprintf(listing,"Unknown DeclNode kind\n");
           break;
@@ -253,6 +265,25 @@ void printTree( TreeNode * tree )
           break;
         default:
           fprintf(listing,"Unknown ParamNode kind\n");
+          break;
+      }
+    }
+
+    else if (tree->nodekind==TypeK)
+    { switch (tree->kind.type) {
+        case TypeNameK:
+          fprintf(listing,"type : ");
+          switch (tree->attr.type) {
+            case INT:
+              fprintf(listing,"int\n");
+              break;
+            case VOID:
+              fprintf(listing,"void\n");
+              break;
+          }
+          break;
+        default:
+          fprintf(listing,"Unknown TypeNode kind\n");
           break;
       }
     }
