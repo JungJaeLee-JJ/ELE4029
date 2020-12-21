@@ -29,7 +29,6 @@ int stack_idx = 0;
 int loc_arr[MAX_SC];
 
 
-/* the hash function */
 static int hash ( char * key )
 { int temp = 0;
   int i = 0;
