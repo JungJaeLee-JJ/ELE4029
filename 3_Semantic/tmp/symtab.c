@@ -39,6 +39,7 @@ static int hash ( char * key )
   return temp;
 }
 
+
 void st_insert( char * name, TreeNode * node, int lineno, int loc ){ 
   //printf("insert %s at lineno %d\n",name,lineno);
   int h = hash(name);
