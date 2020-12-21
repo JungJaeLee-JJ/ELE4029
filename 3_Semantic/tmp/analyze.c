@@ -74,65 +74,7 @@ static void voidVarError(TreeNode * t, char * name)
   Error = TRUE;
 }
 
-/* input Function and output Function are
- * built-in Function, so there are global function
- * and have to print on Function Table 
-*/
-static void insertIOFuncNode(void)
-{ TreeNode * func;
-  TreeNode * typeSpec;
-  TreeNode * param;
-  TreeNode * compStmt;
 
-  /* input Function */
-  func = newDeclNode(FunK);
-
-  typeSpec = newTypeNode(FunK);
-  typeSpec->attr.type = INT;
-  func->type = Integer;
-
-  compStmt = newStmtNode(CompK);
-  compStmt->child[0] = NULL;  // no local variable
-  compStmt->child[1] = NULL;  // no statement
-
-  func->lineno = 0;
-  func->attr.name = "input";
-  func->child[0] = typeSpec;
-  func->child[1] = NULL;      // no parameter
-  func->child[2] = compStmt;
-
-  st_insert("input",func, 0, addLocation());
-  
-  /* output Function */
-  func = newDeclNode(FunK);
-
-  typeSpec = newTypeNode(FunK);
-  typeSpec->attr.type = VOID;
-  func->type = Void;
-
-  param = newParamNode(SingleParamK);   // single integer parameter
-  param->attr.name = "arg";
-  param->type = Integer;
-  param->child[0] = newTypeNode(FunK);
-  param->child[0]->attr.type = INT;
-
-  compStmt = newStmtNode(CompK);
-  compStmt->child[0] = NULL;  // no local variable
-  compStmt->child[1] = NULL;  // no statement
-
-  func->lineno = 0;
-  func->attr.name = "output";
-  func->child[0] = typeSpec;
-  func->child[1] = param;
-  func->child[2] = compStmt;
-
-  st_insert("output",func, 0, addLocation());
-}
-
-/* nullProc is a do-nothing procedure to 
- * generate preorder-only or postorder-only
- * traversals from traverse
- */
 static void nullProc(TreeNode * t)
 { if (t==NULL) return;
   else return;
@@ -255,7 +197,57 @@ static void afterInsertNode(TreeNode * t)
 void buildSymtab(TreeNode * syntaxTree)
 { globalScope = sc_create("global");
   scope_add(globalScope);
-  insertIOFuncNode();
+
+  TreeNode * func;
+  TreeNode * typeSpec;
+  TreeNode * param;
+  TreeNode * compStmt;
+
+  /* input Function */
+  func = newDeclNode(FunK);
+
+  typeSpec = newTypeNode(FunK);
+  typeSpec->attr.type = INT;
+  func->type = Integer;
+
+  compStmt = newStmtNode(CompK);
+  compStmt->child[0] = NULL;  // no local variable
+  compStmt->child[1] = NULL;  // no statement
+
+  func->lineno = 0;
+  func->attr.name = "input";
+  func->child[0] = typeSpec;
+  func->child[1] = NULL;      // no parameter
+  func->child[2] = compStmt;
+
+  st_insert("input",func, 0, addLocation());
+  
+  /* output Function */
+  func = newDeclNode(FunK);
+
+  typeSpec = newTypeNode(FunK);
+  typeSpec->attr.type = VOID;
+  func->type = Void;
+
+  param = newParamNode(SingleParamK);   // single integer parameter
+  param->attr.name = "arg";
+  param->type = Integer;
+  param->child[0] = newTypeNode(FunK);
+  param->child[0]->attr.type = INT;
+
+  compStmt = newStmtNode(CompK);
+  compStmt->child[0] = NULL;  // no local variable
+  compStmt->child[1] = NULL;  // no statement
+
+  func->lineno = 0;
+  func->attr.name = "output";
+  func->child[0] = typeSpec;
+  func->child[1] = param;
+  func->child[2] = compStmt;
+
+  st_insert("output",func, 0, addLocation());
+
+
   traverse(syntaxTree, insertNode, afterInsertNode);
   scope_sub();   // pop global scope
 }
