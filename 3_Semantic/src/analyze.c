@@ -324,6 +324,10 @@ static void checkNode(TreeNode * t)
           else t->type = t->child[0]->type;
           break;
 
+        case ConstK:
+          t->type = Integer;
+          break;
+
         case OpK:
         {
           ExpType lType, rType;
@@ -344,10 +348,6 @@ static void checkNode(TreeNode * t)
           
           break;
         }
-        
-        case ConstK:
-          t->type = Integer;
-          break;
 
         case CallK:
         {
@@ -442,7 +442,7 @@ static void checkNode(TreeNode * t)
 
 static void pre_processing(TreeNode * t){ 
   switch (t->nodekind){ 
-    
+
     case StmtK:
       switch (t->kind.stmt)
       { case CompK:
