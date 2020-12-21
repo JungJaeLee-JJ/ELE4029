@@ -14,7 +14,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
-#include <symtab.h>
+#include "symtab.h"
 
 /* Yacc/Bison generates internally its own values
  * for the tokens. Other files can access these values
