@@ -46,44 +46,43 @@ static void typeError(TreeNode * t, char * message)
 { fprintf(listing,"Error: Type error at line %d: %s\n",t->lineno,message);
   Error = TRUE;
 }
-
-static void symbolError(TreeNode * t, char * message)
-{ fprintf(listing,"Error: Symbol error at line %d: %s\n",t->lineno,message);
-  Error = TRUE;
-}
-
-static void undeclaredError(TreeNode * t)
-{ if (t->kind.exp == CallK)
-    fprintf(listing,"Error: Undeclared Function \"%s\" at line %d\n",t->attr.name,t->lineno);
-  else if (t->kind.exp == IdK || t->kind.exp == ArrIdK)
-    fprintf(listing,"Error: Undeclared Variable \"%s\" at line %d\n",t->attr.name,t->lineno);
-  Error = TRUE;
-}
-
-static void redefinedError(TreeNode * t)
-{ if (t->kind.decl == FunK)
-    fprintf(listing,"Error: Redefined Function \"%s\" at line %d\n",t->attr.name,t->lineno);
-  else if (t->kind.decl == VarK)
-    fprintf(listing,"Error: Redefined Variable \"%s\" at line %d\n",t->attr.name,t->lineno);
-  else if (t->kind.decl == ArrVarK)
-    fprintf(listing,"Error: Redefined Variable \"%s\" at line %d\n",t->attr.arr.name,t->lineno);
-  Error = TRUE;
-}
-
-static void funcDeclNotGlobal(TreeNode * t)
-{ fprintf(listing,"Error: Function Definition is not allowed at line %d (name : %s)\n",t->lineno,t->attr.name);
-  Error = TRUE;
-}
-
-static void voidVarError(TreeNode * t, char * name)
-{ fprintf(listing,"Error: Variable Type cannot be Void at line %d (name : %s)\n",t->lineno,name);
-  Error = TRUE;
-}
-
-
 static void nullProc(TreeNode * t)
 { if (t==NULL) return;
   else return;
+}
+
+static void typeError(TreeNode * t, char * message)
+{ fprintf(listing,"Type error at line %d: %s\n",t->lineno,message);
+  Error = TRUE;
+}
+
+/* 12.12 각 에러별 종류별 함수 추가 */
+static void symbolError(TreeNode * t, char * message){ 
+  fprintf(listing,"Symbol error at line %d: %s\n",t->lineno,message);
+  Error = TRUE;
+}
+
+static void undefinedError(TreeNode * t){ 
+  if (t->kind.exp == CallK) fprintf(listing,"Undefined Function \"%s\" at line %d\n",t->attr.name,t->lineno);
+  else if (t->kind.exp == IdK || t->kind.exp == ArrIdK) fprintf(listing,"Undefined Variable \"%s\" at line %d\n",t->attr.name,t->lineno);
+  Error = TRUE;
+}
+
+static void redefinedError(TreeNode * t){ 
+  if (t->kind.decl == VarK) fprintf(listing,"Redefined Variable \"%s\" at line %d\n",t->attr.name,t->lineno);
+  else if (t->kind.decl == ArrVarK) fprintf(listing,"Redefined Variable \"%s\" at line %d\n",t->attr.arr.name ,t->lineno);
+  else if (t->kind.decl == FunK) fprintf(listing,"Redefined Function \"%s\" at line %d\n",t->attr.name,t->lineno);
+  Error = TRUE;
+}
+
+static void funcDeclNotGlobal(TreeNode * t){ 
+  fprintf(listing,"Function Definition is not allowed at line %d (name : %s)\n",t->lineno,t->attr.name);
+  Error = TRUE;
+}
+
+static void voidVarError(TreeNode * t, char * name){ 
+  fprintf(listing,"Error: Variable Type cannot be Void at line %d (name : %s)\n",t->lineno,name);
+  Error = TRUE;
 }
 
 /* Procedure insertNode inserts 
