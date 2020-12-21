@@ -59,22 +59,30 @@ declaration         : var_declaration { $$ = $1; }
                     | fun_declaration { $$ = $1; }
                     ;
 
-identifier          : ID { savedName = copyString(tokenString); }
+identifier          : ID { 
+                        savedName = copyString(tokenString); 
+                        savedLineNo = lineno;
+                      }
                     ;
 
-num                 : NUM { savedNumber = atoi(tokenString); }
+num                 : NUM { 
+                        savedNumber = atoi(tokenString); 
+                        savedLineNo = lineno;
+                      }
                     ;
 
 var_declaration	    : type_specifier identifier SEMI {
                         $$ = newDeclNode(VarK);
                         $$->child[0] = $1;
                         $$->attr.name = savedName;
+                        $$->lineno = lineno;
                       }
 			              | type_specifier identifier LBRACE num RBRACE SEMI {
                         $$ = newDeclNode(ArrVarK);
                         $$->child[0] = $1;
                         $$->attr.arr.name = savedName;
                         $$->attr.arr.size = savedNumber;
+                        $$->lineno = lineno;
                       }
 			              ;          
 
@@ -91,6 +99,7 @@ type_specifier		  : INT {
 fun_declaration     : type_specifier identifier {
                         $$ = newDeclNode(FunK);
                         $$->attr.name = savedName;
+                        $$->lineno = lineno;
                       }
                       LPAREN params RPAREN compound_stmt {
                         $$ = $3;
