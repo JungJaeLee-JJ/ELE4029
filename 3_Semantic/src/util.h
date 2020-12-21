@@ -27,7 +27,7 @@ TreeNode * newExpNode(ExpKind);
 TreeNode * newDeclNode(DeclKind);
 TreeNode * newParamNode(ParamKind);
 
-/* 추가 *
+/* 추가 */
 TreeNode * newTypeNode(TypeKind kind);
 
 /* Function copyString allocates and makes a new

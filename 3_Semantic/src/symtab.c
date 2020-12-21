@@ -73,24 +73,29 @@ void st_insert( char * name, TreeNode * node, int lineno, int loc ){
  * location of a variable or -1 if not found
  */
 int st_lookup ( char * name ){ 
+
   int h = hash(name);
   ScopeList nowSC = now_scope();
-  while(nowSC != NULL)
-  { BucketList l = nowSC->bucket[h];
-    while((l != NULL) && (strcmp(name,l->name) != 0) )
-      l = l->next;
-    if(l != NULL){
-      return l->memloc;
-    }
+
+  while(nowSC != NULL){ 
+
+    BucketList l = nowSC->bucket[h];
+
+    while((l != NULL) && (strcmp(name,l->name) != 0) ) l = l->next;
+
+    /* 찾았을 때 */
+    if(l != NULL) return l->memloc;
+    
     nowSC = nowSC->parent;
   }
   return -1;
 }
 
-void line_add( char * name, int lineno )
-{ 
+void line_add( char * name, int lineno ){ 
+
   int h = hash(name);
   ScopeList nowSC = now_scope();
+
   while(nowSC != NULL){ 
     
     BucketList l = nowSC->bucket[h];
@@ -112,26 +117,29 @@ void line_add( char * name, int lineno )
   }
 }
 
-int st_lookup_top ( char * name )
-{ int h = hash(name);
+int st_lookup_now_scope ( char * name ){ 
+  
+  int h = hash(name);
   ScopeList nowSC = now_scope();
-   BucketList l = nowSC->bucket[h];
-    while((l != NULL) && (strcmp(name,l->name) != 0))
-      l = l->next;
-    if(l != NULL)
-      return l->memloc;
+  BucketList l = nowSC->bucket[h];
+  while((l != NULL) && (strcmp(name,l->name) != 0)) l = l->next;
+  if(l != NULL) return l->memloc;
   return -1;
 }
 
-BucketList bk_lookup ( char * name )
-{ int h = hash(name);
+BucketList bk_lookup ( char * name ){ 
+  
+  int h = hash(name);
   ScopeList nowSC = now_scope();
-  while(nowSC != NULL)
-  { BucketList l = nowSC->bucket[h];
-    while((l != NULL) && (strcmp(name,l->name) != 0) )
-      l = l->next;
-    if(l != NULL)
-      return l;
+
+  while(nowSC != NULL){ 
+    BucketList l = nowSC->bucket[h];
+
+    while((l != NULL) && (strcmp(name,l->name) != 0)) l = l->next;
+
+    /* 찾았을 때 */
+    if(l != NULL)  return l;
+
     nowSC = nowSC->parent;
   }
   return NULL;
@@ -180,8 +188,8 @@ ScopeList now_scope(){
 
 
 
-int loc_add ( void )
-{ return loc_arr[stack_idx - 1]++;
+int loc_add ( void ){ 
+  return loc_arr[stack_idx - 1]++;
 }
 
 /* Procedure printSymTab prints a formatted 

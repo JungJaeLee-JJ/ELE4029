@@ -131,7 +131,7 @@ static void insertNode( TreeNode * t )
           function_name = t->attr.name;
 
           /* 현재 스코프에서 해당 이름이 이미 사용된 경우 */
-          if (st_lookup_top(t->attr.name) >= 0) { 
+          if (st_lookup_now_scope(t->attr.name) >= 0) { 
             redefinedError(t);
             break;
           }

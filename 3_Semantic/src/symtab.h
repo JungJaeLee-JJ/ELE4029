@@ -47,7 +47,7 @@ typedef struct ScopeListRec {
  */
 void st_insert( char * name, TreeNode * node, int lineno, int loc );
 int st_lookup ( char * name );
-int st_lookup_top ( char * name );
+int st_lookup_now_scope ( char * name );
 BucketList bk_lookup ( char * name );
 
 /* 12.21 추가 */
