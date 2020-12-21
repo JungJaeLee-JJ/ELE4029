@@ -61,8 +61,8 @@ ScopeList sc_create ( char * funcName );
 ScopeList sc_top ( void );
 void sc_pop ( void );
 void sc_push ( ScopeList scope );
-void scope_sub ( void );
-void scope_add ( ScopeList scope );
+// void scope_sub ( void );
+// void scope_add ( ScopeList scope );
 int addLocation ( void );
 
 /* Procedure printSymTab prints a formatted 
