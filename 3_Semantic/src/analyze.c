@@ -63,8 +63,8 @@ static void symbolError(TreeNode * t, char * message){
 }
 
 static void undefinedError(TreeNode * t){ 
-  if (t->kind.exp == CallK) fprintf(listing,"Undefined Function \"%s\" at line %d\n",t->attr.name,t->lineno);
-  else if (t->kind.exp == IdK || t->kind.exp == ArrIdK) fprintf(listing,"Undefined Variable \"%s\" at line %d\n",t->attr.name,t->lineno);
+  if (t->kind.exp == CallK) fprintf(listing,"Undeclared Function \"%s\" at line %d\n",t->attr.name,t->lineno);
+  else if (t->kind.exp == IdK || t->kind.exp == ArrIdK) fprintf(listing,"Undeclared Variable \"%s\" at line %d\n",t->attr.name,t->lineno);
   Error = TRUE;
 }
 
