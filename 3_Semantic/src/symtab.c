@@ -322,7 +322,7 @@ void print_Function_Table (FILE * listing){
                           case ParamK:
                             no_param = 0;
                             fprintf(listing,"\n");
-                            fprintf(listing,"%-60s","");
+                            fprintf(listing,"%-45s","");
                             fprintf(listing,"%-15s",paramBK->name);
                             switch (param_node->type)
                             {
