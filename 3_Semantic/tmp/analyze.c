@@ -92,7 +92,7 @@ static void insertNode( TreeNode * t )
           if (inScopeBefore)
             inScopeBefore = FALSE;
           else
-          { ScopeList scope = sc_create(funcName);
+          { ScopeList scope = scope_create(funcName);
             scope_add(scope);
             location++;
           }
@@ -132,7 +132,7 @@ static void insertNode( TreeNode * t )
             break;
           }
           st_insert(funcName, t, t->lineno, loc_add());
-          scope_add(sc_create(funcName));
+          scope_add(scope_create(funcName));
           inScopeBefore = TRUE;
 
           switch (t->child[0]->attr.type)

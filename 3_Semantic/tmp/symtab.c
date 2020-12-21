@@ -115,7 +115,7 @@ BucketList get_bucket ( char * name )
 }
 
 /* Stack for static scope */
-ScopeList sc_create ( char * funcName )
+ScopeList scope_create ( char * funcName )
 { ScopeList newScope;
   newScope = (ScopeList) malloc(sizeof(struct ScopeListRec));
   newScope->name = funcName;
