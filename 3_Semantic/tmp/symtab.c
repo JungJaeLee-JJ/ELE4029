@@ -132,11 +132,7 @@ ScopeList scope_create (char * name){
   return newSC;
 }
 
-ScopeList now_scope( void )
-{ if(!stack_idx)
-    return NULL;
-  return stack[stack_idx - 1];
-}
+
 
 // 스코프 스택에 추가
 void scope_add(ScopeList scope){
@@ -149,6 +145,13 @@ void scope_sub(){
   if(stack_idx>0) {
     stack_idx--;
   }
+}
+
+ScopeList now_scope(){
+  if(stack_idx>0){
+    return stack[stack_idx-1];
+  }
+  return NULL;
 }
 
 
