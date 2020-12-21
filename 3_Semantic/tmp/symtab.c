@@ -132,15 +132,21 @@ ScopeList sc_top( void )
   return stack[stack_idx - 1];
 }
 
-void sc_pop ( void )
-{ if(stack_idx)
-    stack_idx--;
+// 스코프 스택에서 제거
+void scope_sub(){
+  if(stack_idx>0) {
+    stack[stack_idx-1] = NULL;
+    scope_idx--;
+  }
 }
 
-void sc_push ( ScopeList scope )
-{ stack[stack_idx] = scope;
+
+// 스코프 스택에 추가
+void scope_add(ScopeList scope){
+  stack[stack_idx] = scope;
   loc_arr[stack_idx++] = 0;
 }
+
 
 int addLocation ( void )
 { return loc_arr[stack_idx - 1]++;
