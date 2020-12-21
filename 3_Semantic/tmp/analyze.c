@@ -101,7 +101,7 @@ static void insertNode( TreeNode * t )
             scope_add(scope);
             location++;
           }
-          t->scope = sc_top();
+          t->scope = now_scope();
           break;
         default:
           break;
@@ -132,7 +132,7 @@ static void insertNode( TreeNode * t )
           { redefinedError(t);
             break;
           }
-          if (sc_top() != globalSC)
+          if (now_scope() != globalSC)
           { funcDeclNotGlobal(t);
             break;
           }

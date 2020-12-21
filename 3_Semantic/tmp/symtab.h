@@ -58,7 +58,7 @@ BucketList get_bucket ( char * name );
 
 /* Stack for static scope */
 ScopeList scope_create ( char * function_name );
-ScopeList sc_top ( void );
+ScopeList now_scope ( void );
 void scope_sub ( void );
 void scope_add ( ScopeList scope );
 // void scope_sub ( void );

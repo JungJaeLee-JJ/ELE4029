@@ -43,7 +43,7 @@ static int hash ( char * key )
 void st_insert( char * name, TreeNode * node, int lineno, int loc ){ 
   //printf("insert %s at lineno %d\n",name,lineno);
   int h = hash(name);
-  ScopeList nowSC = sc_top();
+  ScopeList nowSC = now_scope();
   BucketList l =  nowSC->bucket[h];
 
  /* Bucket list 순회 */
@@ -88,7 +88,7 @@ void st_add_lineno( char * name, int lineno )
 
 int st_lookup_top ( char * name )
 { int h = hash(name);
-  ScopeList nowScope = sc_top();
+  ScopeList nowScope = now_scope();
   //while(nowScope != NULL)
    BucketList l = nowScope->bucket[h];
     while((l != NULL) && (strcmp(name,l->name) != 0))
@@ -102,7 +102,7 @@ int st_lookup_top ( char * name )
 
 BucketList get_bucket ( char * name )
 { int h = hash(name);
-  ScopeList nowScope = sc_top();
+  ScopeList nowScope = now_scope();
   while(nowScope != NULL)
   { BucketList l = nowScope->bucket[h];
     while((l != NULL) && (strcmp(name,l->name) != 0) )
@@ -120,13 +120,13 @@ ScopeList scope_create ( char * function_name )
   newScope = (ScopeList) malloc(sizeof(struct ScopeListRec));
   newScope->name = function_name;
   newScope->depth = stack_idx;
-  newScope->parent = sc_top();
+  newScope->parent = now_scope();
   scopes[scope_idx++] = newScope;
 
   return newScope;
 }
 
-ScopeList sc_top( void )
+ScopeList now_scope( void )
 { if(!stack_idx)
     return NULL;
   return stack[stack_idx - 1];
