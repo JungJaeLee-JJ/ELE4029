@@ -118,7 +118,7 @@ static void insertNode( TreeNode * t )
           /* 만약 선언되지 않은 경우 에러*/
           if (st_lookup(t->attr.name) == -1) undefinedError(t);
            /* 선언되었다면 line number만 추가 */
-          else lineno_add(t->attr.name,t->lineno);
+          else line_add(t->attr.name,t->lineno);
           break;
 
         default:
@@ -131,7 +131,7 @@ static void insertNode( TreeNode * t )
           function_name = t->attr.name;
 
           /* 현재 스코프에서 해당 이름이 이미 사용된 경우 */
-          if (st_lookup_top(t->attr.name) >= -1) { 
+          if (st_lookup_top(t->attr.name) >= 0) { 
             redefinedError(t);
             break;
           }
@@ -331,16 +331,15 @@ static void checkNode(TreeNode * t)
           rType = t->child[1]->type;
           op = t->attr.op;
 
-          /*
+          
           if(lType == ArrayInteger && t->child[0]->child[0] != NULL) lType = Integer;
           if(rType == ArrayInteger && t->child[1]->child[0] != NULL) rType = Integer;
-          */
+          
 
           if (lType == Void || rType == Void) typeError(t,"void variable cannot be operand");
           else if (lType != rType) typeError(t,"operands have different type");
-          /*
           else t->type = Integer;
-          */
+          
           break;
         }
         
@@ -466,11 +465,8 @@ static void beforeCheckNode(TreeNode * t)
 /* Procedure typeCheck performs type checking 
  * by a postorder syntax tree traversal
  */
-void typeCheck(TreeNode * syntaxTree)
-{ 
+void typeCheck(TreeNode * syntaxTree){ 
   scope_add(globalSC);
   traverse(syntaxTree,beforeCheckNode,checkNode);
   scope_sub();
 }
-
-
