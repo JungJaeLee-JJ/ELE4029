@@ -197,6 +197,7 @@ static void backToParent(TreeNode * t){
   if (t->nodekind == StmtK && t->kind.stmt == CompK) scope_sub();
 }
 
+
 /* Function buildSymtab constructs the symbol 
  * table by preorder traversal of the syntax tree
  */
@@ -267,34 +268,10 @@ void buildSymtab(TreeNode * syntaxTree){
   scope_sub();
 }
 
-static void beforeCheckNode(TreeNode * t)
-{ switch (t->nodekind)
-  { case DeclK:
-      switch (t->kind.decl)
-      { case FunK:
-          function_name = t->attr.name;
-          break;
-        default:
-          break;
-      }
-      break;
-    case StmtK:
-      switch (t->kind.stmt)
-      { case CompK:
-          scope_add(t->scope);
-          break;
-        default:
-          break;
-      }
-      break;
-    default:
-      break;
-  }
-}
-
 /* Procedure checkNode performs
  * type checking at a single tree node
  */
+
 static void checkNode(TreeNode * t)
 { switch (t->nodekind)
   { case StmtK:
