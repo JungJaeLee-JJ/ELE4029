@@ -144,11 +144,11 @@ ScopeList sc_top( void )
 //   loc_arr[stack_idx++] = 0;
 // }
 
-void sc_pop ( void )
+void scope_sub ( void )
 { if(stack_idx)stack_idx--;
 }
 
-void sc_push ( ScopeList scope )
+void scope_add ( ScopeList scope )
 { stack[stack_idx] = scope;
   loc_arr[stack_idx++] = 0;
 }

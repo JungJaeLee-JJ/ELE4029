@@ -151,7 +151,7 @@ static void insertNode( TreeNode * t )
             inScopeBefore = FALSE;
           else
           { ScopeList scope = sc_create(funcName);
-            sc_push(scope);
+            scope_add(scope);
             location++;
           }
           t->scope = sc_top();
@@ -190,7 +190,7 @@ static void insertNode( TreeNode * t )
             break;
           }
           st_insert(funcName, t, t->lineno, addLocation());
-          sc_push(sc_create(funcName));
+          scope_add(sc_create(funcName));
           inScopeBefore = TRUE;
 
           switch (t->child[0]->attr.type)
@@ -246,7 +246,7 @@ static void insertNode( TreeNode * t )
 
 static void afterInsertNode(TreeNode * t)
 { if (t->nodekind == StmtK && t->kind.stmt == CompK)
-    sc_pop();
+    scope_sub();
 }
 
 /* Function buildSymtab constructs the symbol 
@@ -254,10 +254,10 @@ static void afterInsertNode(TreeNode * t)
  */
 void buildSymtab(TreeNode * syntaxTree)
 { globalScope = sc_create("global");
-  sc_push(globalScope);
+  scope_add(globalScope);
   insertIOFuncNode();
   traverse(syntaxTree, insertNode, afterInsertNode);
-  sc_pop();   // pop global scope
+  scope_sub();   // pop global scope
 }
 
 static void beforeCheckNode(TreeNode * t)
@@ -274,7 +274,7 @@ static void beforeCheckNode(TreeNode * t)
     case StmtK:
       switch (t->kind.stmt)
       { case CompK:
-          sc_push(t->scope);
+          scope_add(t->scope);
           break;
         default:
           break;
@@ -293,7 +293,7 @@ static void checkNode(TreeNode * t)
   { case StmtK:
       switch (t->kind.stmt)
       { case CompK:
-          sc_pop();
+          scope_sub();
           break;
         case IfK:
         case IfEK:
@@ -451,7 +451,7 @@ static void checkNode(TreeNode * t)
  * by a postorder syntax tree traversal
  */
 void typeCheck(TreeNode * syntaxTree)
-{ sc_push(globalScope);
+{ scope_add(globalScope);
   traverse(syntaxTree,beforeCheckNode,checkNode);
-  sc_pop();
+  scope_sub();
 }
