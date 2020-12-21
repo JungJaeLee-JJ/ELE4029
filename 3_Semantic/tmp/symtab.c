@@ -238,7 +238,7 @@ void print_SymTab(FILE * listing)
 
 
 void print_FuncTab(FILE * listing)
-{ int sc_idx, bk_idx, k, param_bk_idx;
+{ int sc_idx, bk_idx, param_sc_idx, param_bk_idx;
   fprintf(listing,"< Function Table >\n");
   fprintf(listing,"Function Name  Scope Name  Return Type  Parameter Name  Parameter Type\n");
   fprintf(listing,"-------------  ----------  -----------  --------------  --------------\n");
@@ -269,26 +269,26 @@ void print_FuncTab(FILE * listing)
                     break;
                 }
 
-                int noParam = TRUE;
-                for (k = 0; k < scope_idx; k++)
-                { ScopeList paramScope = scopes[k];
-                  if (strcmp(paramScope->name, nowBK->name) != 0)
+                int no_param = TRUE;
+                for (param_sc_idx = 0; param_sc_idx < scope_idx; param_sc_idx++)
+                { ScopeList paramSC = scopes[param_sc_idx];
+                  if (strcmp(paramSC->name, nowBK->name) != 0)
                     continue;
-                  BucketList * paramhashTable = paramScope->bucket;                  //printf("c\n");
+                  BucketList * param_l = paramSC->bucket;                  //printf("c\n");
 
                   for (param_bk_idx = 0; param_bk_idx < MAX_BUCKET; param_bk_idx++)
-                  { if(paramhashTable[param_bk_idx] != NULL)
-                    { BucketList pbl = paramhashTable[param_bk_idx];
-                      TreeNode * pnode = pbl->node;
+                  { if(param_l[param_bk_idx] != NULL)
+                    { BucketList paramBK = param_l[param_bk_idx];
+                      TreeNode * param_node = paramBK->node;
 
-                      while(pbl != NULL)
-                      { switch (pnode->nodekind)
+                      while(paramBK != NULL)
+                      { switch (param_node->nodekind)
                         { case ParamK:
-                            noParam = FALSE;
+                            no_param = FALSE;
                             fprintf(listing,"\n");
                             fprintf(listing,"%-40s","");
-                            fprintf(listing,"%-16s",pbl->name);
-                            switch (pnode->type)
+                            fprintf(listing,"%-16s",paramBK->name);
+                            switch (param_node->type)
                             { case Integer:
                                 fprintf(listing,"%-14s","Integer");
                                 break;
@@ -302,13 +302,13 @@ void print_FuncTab(FILE * listing)
                           default:
                             break;
                         }
-                        pbl = pbl->next;
+                        paramBK = paramBK->next;
                       }
                     }
                   }
                   break;
                 }
-                if (noParam)
+                if (no_param)
                 { fprintf(listing,"%-16s","");
                   if (strcmp(nowBK->name, "output") != 0)
                     fprintf(listing,"%-14s","Void");
@@ -328,6 +328,7 @@ void print_FuncTab(FILE * listing)
     }
   }
 }
+
 
 
 
