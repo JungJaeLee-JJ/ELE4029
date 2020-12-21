@@ -47,65 +47,65 @@ extern int yydebug;
   {
     NO_ELSE = 258,
     ELSE = 259,
-    ERROR = 260,
-    IF = 261,
-    WHILE = 262,
-    RETURN = 263,
-    INT = 264,
-    VOID = 265,
-    ID = 266,
-    NUM = 267,
-    ASSIGN = 268,
-    EQ = 269,
-    NE = 270,
-    LT = 271,
-    LE = 272,
-    GT = 273,
-    GE = 274,
-    PLUS = 275,
-    MINUS = 276,
-    TIMES = 277,
-    OVER = 278,
-    LPAREN = 279,
-    RPAREN = 280,
-    LBRACE = 281,
-    RBRACE = 282,
-    LCURLY = 283,
-    RCURLY = 284,
-    SEMI = 285,
-    COMMA = 286
+    IF = 260,
+    WHILE = 261,
+    RETURN = 262,
+    INT = 263,
+    VOID = 264,
+    ID = 265,
+    NUM = 266,
+    ASSIGN = 267,
+    EQ = 268,
+    NE = 269,
+    LT = 270,
+    LE = 271,
+    GT = 272,
+    GE = 273,
+    PLUS = 274,
+    MINUS = 275,
+    TIMES = 276,
+    OVER = 277,
+    LPAREN = 278,
+    RPAREN = 279,
+    LBRACE = 280,
+    RBRACE = 281,
+    LCURLY = 282,
+    RCURLY = 283,
+    SEMI = 284,
+    COMMA = 285,
+    ERROR = 286
   };
 #endif
 /* Tokens.  */
 #define NO_ELSE 258
 #define ELSE 259
-#define ERROR 260
-#define IF 261
-#define WHILE 262
-#define RETURN 263
-#define INT 264
-#define VOID 265
-#define ID 266
-#define NUM 267
-#define ASSIGN 268
-#define EQ 269
-#define NE 270
-#define LT 271
-#define LE 272
-#define GT 273
-#define GE 274
-#define PLUS 275
-#define MINUS 276
-#define TIMES 277
-#define OVER 278
-#define LPAREN 279
-#define RPAREN 280
-#define LBRACE 281
-#define RBRACE 282
-#define LCURLY 283
-#define RCURLY 284
-#define SEMI 285
-#define COMMA 286
+#define IF 260
+#define WHILE 261
+#define RETURN 262
+#define INT 263
+#define VOID 264
+#define ID 265
+#define NUM 266
+#define ASSIGN 267
+#define EQ 268
+#define NE 269
+#define LT 270
+#define LE 271
+#define GT 272
+#define GE 273
+#define PLUS 274
+#define MINUS 275
+#define TIMES 276
+#define OVER 277
+#define LPAREN 278
+#define RPAREN 279
+#define LBRACE 280
+#define RBRACE 281
+#define LCURLY 282
+#define RCURLY 283
+#define SEMI 284
+#define COMMA 285
+#define ERROR 286
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED

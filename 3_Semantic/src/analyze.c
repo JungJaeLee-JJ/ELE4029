@@ -435,6 +435,7 @@ static void checkNode(TreeNode * t)
   }
 }
 
+
 static void beforeCheckNode(TreeNode * t)
 { switch (t->nodekind)
   { case DeclK:
@@ -449,9 +450,7 @@ static void beforeCheckNode(TreeNode * t)
     case StmtK:
       switch (t->kind.stmt)
       { case CompK:
-          /*
-          sc_push(t->attr.scope);
-          */
+          scope_add(t->scope);
           break;
         default:
           break;
