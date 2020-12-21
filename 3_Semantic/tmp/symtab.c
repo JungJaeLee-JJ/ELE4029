@@ -323,7 +323,7 @@ void print_Function_Table (FILE * listing){
                           default:
                             break;
                         }
-                        BucketList paramBK = paramBK->next;
+                        paramBK = paramBK->next;
                       }
                     }
                   }
@@ -347,6 +347,8 @@ void print_Function_Table (FILE * listing){
     }
   }
 }
+
+
 
 
 
