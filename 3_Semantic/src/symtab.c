@@ -21,10 +21,10 @@
 
 /* 스코프 최대 갯수 */
 ScopeList scopes[MAX_SC];
-int scope_idx;
+int scope_idx = 0;
 
 ScopeList stack[MAX_SC];
-int stack_idx;
+int stack_idx = 0;
 
 int loc[MAX_SC];
 
@@ -65,8 +65,6 @@ void st_insert( char * name, TreeNode * node, int lineno, int loc ){
     l->next = nowSC->bucket[h];
     nowSC->bucket[h] = l;   
 
-    /* 변수 및 함수 index */
-    nowSC->memidx++;
   }
   /* 이미 선언된 경우 line number만 추가 */
   else 
@@ -146,8 +144,7 @@ ScopeList scope_create (char * name){
   newSC->parent = now_scope();
 
   /* 스코프 주소값 등록 */
-  scopes[scope_idx] = newSC;
-  scope_idx++;
+  scopes[scope_idx++] = newSC;
 
  
   return newSC;

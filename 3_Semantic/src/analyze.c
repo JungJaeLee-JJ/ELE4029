@@ -224,7 +224,7 @@ void buildSymtab(TreeNode * syntaxTree, FILE * listing){
   comp = newStmtNode(CompK);
   type->attr.type = INT;
 
-  fprintf(listing,"1\n");
+  //fprintf(listing,"1\n");
 
   comp->child[0] = NULL;
   comp->child[1] = NULL;
@@ -236,7 +236,7 @@ void buildSymtab(TreeNode * syntaxTree, FILE * listing){
   function->child[1] = NULL;
   function->child[2] = comp; 
 
-  fprintf(listing,"2\n");
+  //fprintf(listing,"2\n");
 
   st_insert("input",function,0,loc_add());
 
