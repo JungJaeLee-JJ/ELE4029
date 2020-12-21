@@ -112,9 +112,9 @@ static void insertNode( TreeNode * t )
       { case IdK:
         case ArrIdK:
         case CallK:
-          /* not yet in table, undeclared error */
+          /* not yet in table, undefined error */
           if (st_lookup(t->attr.name) == -1)
-            undeclaredError(t);
+            undefinedError(t);
           /* already in table, so ignore location, 
              add line number of use only */ 
           else
