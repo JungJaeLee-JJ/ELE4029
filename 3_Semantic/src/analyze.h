@@ -13,7 +13,7 @@
  */
 
 /* 디버깅을 위해 listing 추가 */
-void buildSymtab(TreeNode *, FILE * listing);
+void buildSymtab(TreeNode *);
 
 /* Procedure typeCheck performs type checking 
  * by a postorder syntax tree traversal

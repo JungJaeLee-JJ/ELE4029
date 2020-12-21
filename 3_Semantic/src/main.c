@@ -76,7 +76,7 @@ main( int argc, char * argv[] )
   { 
     /* 12.12 분석 함수 수정 */
     if(TraceAnalyze) fprintf(listing,"\nBuilding Symbol Table...\n");
-    buildSymtab(syntaxTree,listing);
+    buildSymtab(syntaxTree);
     if(TraceAnalyze) fprintf(listing,"\nChecking Types...\n");
     typeCheck(syntaxTree);
     if(TraceAnalyze) fprintf(listing,"\nType Checking Finished\n");
