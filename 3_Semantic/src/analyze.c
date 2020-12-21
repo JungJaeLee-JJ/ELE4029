@@ -265,6 +265,7 @@ void buildSymtab(TreeNode * syntaxTree){
 
 
   traverse(syntaxTree,insertNode,backToParent);
+  scope_sub();
 }
 
 /* Procedure checkNode performs
@@ -467,7 +468,9 @@ static void beforeCheckNode(TreeNode * t)
  */
 void typeCheck(TreeNode * syntaxTree)
 { 
+  scope_add(globalSC);
   traverse(syntaxTree,beforeCheckNode,checkNode);
+  scope_sub();
 }
 
 
