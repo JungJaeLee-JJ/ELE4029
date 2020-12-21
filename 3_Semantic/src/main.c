@@ -82,7 +82,7 @@ int main( int argc, char * argv[] )
     typeCheck(syntaxTree);
     if(TraceAnalyze) fprintf(listing,"\nType Checking Finished\n");
     //if (TraceAnalyze && !Error){
-    if (TraceAnalyze){
+    if (TraceAnalyze && !Error){
       printSymTab(listing);
       fprintf(listing,"\n\n");
       print_Function_Table(listing);
