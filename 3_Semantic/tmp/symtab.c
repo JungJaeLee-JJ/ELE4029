@@ -26,7 +26,7 @@ int scope_idx = 0;
 ScopeList stack[MAX_SC];
 int stack_idx = 0;
 
-int loc[MAX_SC];
+int loc_arr[MAX_SC];
 
 
 /* the hash function */
@@ -40,25 +40,30 @@ static int hash ( char * key )
   return temp;
 }
 
+void st_insert( char * name, TreeNode * node, int lineno, int loc ){ 
+  //printf("insert %s at lineno %d\n",name,lineno);
+  int h = hash(name);
+  ScopeList nowSC = sc_top();
+  BucketList l =  nowSC->bucket[h];
 
-void st_insert( char * name, int lineno, int loc, TreeNode * treeNode )
-{ int h = hash(name);
-  ScopeList nowScope = sc_top();
-  BucketList l =  nowScope->bucket[h];
-  while ((l != NULL) && (strcmp(name,l->name) != 0))
-    l = l->next;
-  if (l == NULL) /* variable not yet in table */
-  { 
-    //printf("variable not in table %d\n",loc);
+ /* Bucket list 순회 */
+  while ((l != NULL) && (strcmp(name,l->name) != 0)) l = l->next;
+
+  /* 선언되지 않은경우 해당 변수를 테이블에 삽입 */
+  if (l == NULL) { 
     l = (BucketList) malloc(sizeof(struct BucketListRec));
     l->name = name;
-    l->node = treeNode;
+    l->node = node;
+    
+    /* line number 추가 */
     l->lines = (LineList) malloc(sizeof(struct LineListRec));
     l->lines->lineno = lineno;
     l->memloc = loc;
     l->lines->next = NULL;
-    l->next = nowScope->bucket[h];
-    nowScope->bucket[h] = l; 
+
+    /* 맨 앞에 삽입 */
+    l->next = nowSC->bucket[h];
+    nowSC->bucket[h] = l;   
   }
 } 
 
@@ -134,11 +139,11 @@ void sc_pop ( void )
 
 void sc_push ( ScopeList scope )
 { stack[stack_idx] = scope;
-  loc[stack_idx++] = 0;
+  loc_arr[stack_idx++] = 0;
 }
 
 int addLocation ( void )
-{ return loc[stack_idx - 1]++;
+{ return loc_arr[stack_idx - 1]++;
 }
 
 /* Procedure printSymTab prints a formatted 

@@ -39,13 +39,13 @@ typedef struct ScopeListRec {
     struct ScopeListRec * parent;
 } * ScopeList;
  
- 
+
 /* Procedure st_insert inserts line numbers and
  * memory locations into the symbol table
  * loc = memory location is inserted only the
  * first time, otherwise ignored
  */
-void st_insert( char * name, int lineno, int loc, TreeNode * treeNode );
+void st_insert( char * name, TreeNode * node, int lineno, int loc );
 
 /* Function st_lookup returns the memory 
  * location of a variable or -1 if not found

@@ -101,7 +101,7 @@ static void insertIOFuncNode(void)
   func->child[1] = NULL;      // no parameter
   func->child[2] = compStmt;
 
-  st_insert("input", 0, addLocation(),func);
+  st_insert("input",func, 0, addLocation());
   
   /* output Function */
   func = newDeclNode(FunK);
@@ -126,7 +126,7 @@ static void insertIOFuncNode(void)
   func->child[1] = param;
   func->child[2] = compStmt;
 
-  st_insert("output", 0, addLocation(), func);
+  st_insert("output",func, 0, addLocation());
 }
 
 /* nullProc is a do-nothing procedure to 
@@ -189,7 +189,7 @@ static void insertNode( TreeNode * t )
           { funcDeclNotGlobal(t);
             break;
           }
-          st_insert(funcName, t->lineno, addLocation(), t);
+          st_insert(funcName, t, t->lineno, addLocation());
           sc_push(sc_create(funcName));
           inScopeBefore = TRUE;
 
@@ -216,7 +216,7 @@ static void insertNode( TreeNode * t )
             }
             
             if (st_lookup_top(name) < 0){
-              st_insert(name, t->lineno, addLocation(), t);
+              st_insert(name, t, t->lineno, addLocation());
             }
             else 
               redefinedError(t);
@@ -232,7 +232,7 @@ static void insertNode( TreeNode * t )
         }
 
         if (st_lookup(t->attr.name) == -1)
-        { st_insert(t->attr.name, t->lineno, addLocation(), t);
+        { st_insert(t->attr.name, t, t->lineno, addLocation());
           if(t->kind.param == SingleParamK)
             t->type = Integer;
           else
