@@ -55,7 +55,7 @@ void scope_add(ScopeList scope);
 void scope_sub();
 ScopeList now_scope();
 int loc_add ();
-void lineno_add ( char * name, int lineno );
+void line_add ( char * name, int lineno );
 
 ScopeList scope_create (char * name);
 
