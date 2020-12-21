@@ -87,11 +87,11 @@ var_declaration	    : type_specifier identifier SEMI {
 			              ;          
 
 type_specifier		  : INT { 
-                        $$ = newDeclNode(TypeK);
+                        $$ = newTypeNode(TypeNameK);
                         $$->attr.type = INT;
                       }
                     | VOID { 
-                        $$ = newDeclNode(TypeK);
+                        $$ = newTypeNode(TypeNameK);
                         $$->attr.type = VOID;
                       }
                     ;
