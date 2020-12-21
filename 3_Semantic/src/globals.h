@@ -14,7 +14,6 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
-#include "symtab.h"
 
 /* Yacc/Bison generates internally its own values
  * for the tokens. Other files can access these values
@@ -101,14 +100,10 @@ typedef struct treeNode
         Arr_info arr; 
         int val;
         char * name; 
-
-        
-
       } attr;
 
-
       /* 12월 21일 추가 */
-      ScopeList* scope;
+      struct ScopeList* scope;
 
      ExpType type; /* for type checking of exps */
    } TreeNode;
