@@ -138,19 +138,19 @@ ScopeList now_scope( void )
   return stack[stack_idx - 1];
 }
 
-// 스코프 스택에서 제거
-void scope_sub(){
-  if(stack_idx>0) {
-    stack[stack_idx-1] = NULL;
-    scope_idx--;
-  }
-}
-
 // 스코프 스택에 추가
 void scope_add(ScopeList scope){
   stack[stack_idx] = scope;
   loc_arr[stack_idx++] = 0;
 }
+
+// 스코프 스택에서 제거
+void scope_sub(){
+  if(stack_idx>0) {
+    scope_idx--;
+  }
+}
+
 
 
 int loc_add ( void )
