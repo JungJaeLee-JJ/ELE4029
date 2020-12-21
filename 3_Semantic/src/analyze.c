@@ -51,8 +51,8 @@ static void nullProc(TreeNode * t)
   else return;
 }
 
-static void typeError(TreeNode * t, char * message)
-{ fprintf(listing,"Type error at line %d: %s\n",t->lineno,message);
+static void typeError(TreeNode * t, char * message){ 
+  fprintf(listing,"Type error at line %d: %s\n",t->lineno,message);
   Error = TRUE;
 }
 
@@ -69,19 +69,19 @@ static void undefinedError(TreeNode * t){
 }
 
 static void redefinedError(TreeNode * t){ 
-  if (t->kind.decl == VarK) fprintf(listing,"Redefined Variable \"%s\" at line %d\n",t->attr.name,t->lineno);
-  else if (t->kind.decl == ArrVarK) fprintf(listing,"Redefined Variable \"%s\" at line %d\n",t->attr.arr.name ,t->lineno);
-  else if (t->kind.decl == FunK) fprintf(listing,"Redefined Function \"%s\" at line %d\n",t->attr.name,t->lineno);
+  if (t->kind.decl == VarK) fprintf(listing,"Redeclared Variable \"%s\" at line %d\n",t->attr.name,t->lineno);
+  else if (t->kind.decl == ArrVarK) fprintf(listing,"Redeclared Variable \"%s\" at line %d\n",t->attr.arr.name ,t->lineno);
+  else if (t->kind.decl == FunK) fprintf(listing,"Redeclared Function \"%s\" at line %d\n",t->attr.name,t->lineno);
   Error = TRUE;
 }
 
 static void funcDeclNotGlobal(TreeNode * t){ 
-  fprintf(listing,"Function Definition is not allowed at line %d (name : %s)\n",t->lineno,t->attr.name);
+  fprintf(listing,"Func declaration not on Global! at line %d (name : %s)\n",t->lineno,t->attr.name);
   Error = TRUE;
 }
 
-static void voidVarError(TreeNode * t, char * name)
-{ fprintf(listing,"Error: Variable Type cannot be Void at line %d (name : %s)\n",t->lineno,name);
+static void voidVarError(TreeNode * t, char * name){ 
+  fprintf(listing,"Error: Variable Type cannot be Void at line %d (name : %s)\n",t->lineno,name);
   Error = TRUE;
 }
 
@@ -277,9 +277,6 @@ static void checkNode(TreeNode * t)
   { case StmtK:
       switch (t->kind.stmt)
       { 
-        case CompK:
-          scope_sub();
-          break;
 
         /* if문 에러 */
         case IfK:
@@ -308,6 +305,11 @@ static void checkNode(TreeNode * t)
 
           break;
         }
+
+        case CompK:
+          scope_sub();
+          break;
+
         default:
           break;
       }
@@ -347,23 +349,6 @@ static void checkNode(TreeNode * t)
           t->type = Integer;
           break;
 
-        case IdK:
-        case ArrIdK:
-        {  
-          BucketList l = bk_lookup(t->attr.name);
-          if (l == NULL) break;
-
-          TreeNode * symbolNode = NULL;
-          symbolNode = l->node;
-
-          if (t->kind.exp == ArrIdK){ 
-            if (symbolNode->nodekind == DeclK && symbolNode->kind.decl != ArrVarK) typeError(t, "invalid expression");
-            else if (symbolNode->nodekind == ParamK && symbolNode->kind.param != ArrParamK)  typeError(t, "invalid expression");
-            else t->type = symbolNode->type;
-          }
-          else t->type = symbolNode->type;
-          break;
-        }
         case CallK:
         {
           BucketList l = bk_lookup(t->attr.name);
@@ -409,6 +394,25 @@ static void checkNode(TreeNode * t)
           t->type = funcNode->type;
           break;
         }
+
+        case IdK:
+        case ArrIdK:
+        {  
+          BucketList l = bk_lookup(t->attr.name);
+          if (l == NULL) break;
+
+          TreeNode * symbolNode = NULL;
+          symbolNode = l->node;
+
+          if (t->kind.exp == ArrIdK){ 
+            if (symbolNode->nodekind == DeclK && symbolNode->kind.decl != ArrVarK) typeError(t, "invalid expression");
+            else if (symbolNode->nodekind == ParamK && symbolNode->kind.param != ArrParamK)  typeError(t, "invalid expression");
+            else t->type = symbolNode->type;
+          }
+          else t->type = symbolNode->type;
+          break;
+        }
+
         default:
           break;
        }
@@ -436,17 +440,9 @@ static void checkNode(TreeNode * t)
 }
 
 
-static void beforeCheckNode(TreeNode * t)
-{ switch (t->nodekind)
-  { case DeclK:
-      switch (t->kind.decl)
-      { case FunK:
-          function_name = t->attr.name;
-          break;
-        default:
-          break;
-      }
-      break;
+static void pre_processing(TreeNode * t){ 
+  switch (t->nodekind){ 
+    
     case StmtK:
       switch (t->kind.stmt)
       { case CompK:
@@ -456,6 +452,17 @@ static void beforeCheckNode(TreeNode * t)
           break;
       }
       break;
+
+    case DeclK:
+      switch (t->kind.decl){ 
+        case FunK:
+          function_name = t->attr.name;
+          break;
+        default:
+          break;
+      }
+      break;
+
     default:
       break;
   }
@@ -466,6 +473,6 @@ static void beforeCheckNode(TreeNode * t)
  */
 void typeCheck(TreeNode * syntaxTree){ 
   scope_add(globalSC);
-  traverse(syntaxTree,beforeCheckNode,checkNode);
+  traverse(syntaxTree,pre_processing,checkNode);
   scope_sub();
 }
