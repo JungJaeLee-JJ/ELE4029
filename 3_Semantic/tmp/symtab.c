@@ -156,7 +156,7 @@ void printSymTab(FILE * listing)
   fprintf(listing,"\n");
   print_Function_Table(listing);
   fprintf(listing,"\n");
-  print_Func_globVar(listing);
+  print_Function_and_GlobalVariables(listing);
   fprintf(listing,"\n");
   print_FuncP_N_LoclVar(listing);
 } /* printSymTab */
@@ -352,33 +352,43 @@ void print_Function_Table (FILE * listing){
 
 
 
-void print_Func_globVar(FILE * listing)
-{ int i, j;
+void print_Function_and_GlobalVariables(FILE * listing){ 
+  
+  int sc_idx,bk_idx;
+
   fprintf(listing,"< Function and Global Variables >\n");
   fprintf(listing,"   ID Name      ID Type    Data Type \n");
   fprintf(listing,"-------------  ---------  -----------\n");
 
-  for (i = 0; i < scope_idx; i++)
-  { ScopeList nowScope = scopes[i];
-    if (strcmp(nowScope->name, "global") != 0)
-      continue;
+  for(sc_idx = 0; sc_idx < scope_idx; sc_idx++){
 
-    BucketList * hashTable = nowScope->bucket;
+    ScopeList nowSC = scopes[sc_idx];
 
-    for (j = 0; j < MAX_BUCKET; j++)
-    { if(hashTable[j] != NULL)
-      { BucketList bl = hashTable[j];
-        TreeNode * node = bl->node;
+    /* globa만 확인 */
+    if(strcmp(nowSC->name, "global") != 0) continue;
 
-        while(bl != NULL)
-        { switch (node->nodekind)
-          { case DeclK:
-              fprintf(listing,"%-15s",bl->name);
+    BucketList * l =  nowSC->bucket;  
+
+    /* 해당 심볼 테이블 내의 모든 버킷 순회 */
+    for(bk_idx =0; bk_idx < MAX_BUCKET; bk_idx++){ 
+      
+      if (l[bk_idx] != NULL){ 
+    
+        BucketList nowBK = l[bk_idx];
+        /* 같은 버켓에 존재하는 symbol 순회 */
+        while (nowBK != NULL){
+          TreeNode * node = nowBK->node;
+          switch (node->nodekind)
+          { 
+            case DeclK:
+              fprintf(listing,"%-15s",nowBK->name);
               switch (node->kind.decl)
-              { case FunK:
+              { 
+                case FunK:
                   fprintf(listing,"%-11s","Function");
                   switch (node->type)
-                  { case Void:
+                  { 
+                    case Void:
                       fprintf(listing,"%-11s","Void");
                       break;
                     case Integer:
@@ -389,13 +399,13 @@ void print_Func_globVar(FILE * listing)
                   }
                   break;
                 case VarK:
+                  fprintf(listing,"%-11s","Variable");
                   switch (node->type)
-                  { case Void:
-                      fprintf(listing,"%-11s","Variable");
+                  { 
+                    case Void:
                       fprintf(listing,"%-11s","Void");
                       break;
                     case Integer:
-                      fprintf(listing,"%-11s","Variable");
                       fprintf(listing,"%-11s","Integer");
                       break;
                     default:
@@ -404,7 +414,7 @@ void print_Func_globVar(FILE * listing)
                   break;
                 case ArrVarK:
                   fprintf(listing,"%-11s","Variable");
-                  fprintf(listing,"%-15s","IntegerArray");
+                  fprintf(listing,"%-15s","ArrayInteger");
                   break;
                 default:
                   break;
@@ -414,11 +424,10 @@ void print_Func_globVar(FILE * listing)
             default:
               break;
           }
-          bl = bl->next;
+          nowBK = nowBK->next;
         }
       }
     }
-    break;
   }
 }
 
