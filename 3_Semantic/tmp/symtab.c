@@ -113,16 +113,23 @@ BucketList bk_lookup ( char * name )
   return NULL;
 }
 
-/* Stack for static scope */
-ScopeList scope_create ( char * function_name )
-{ ScopeList newScope;
-  newScope = (ScopeList) malloc(sizeof(struct ScopeListRec));
-  newScope->name = function_name;
-  newScope->depth = stack_idx;
-  newScope->parent = now_scope();
-  scopes[scope_idx++] = newScope;
+ScopeList scope_create (char * name){
+  
+  /* 스코프 생성 */
+  ScopeList newSC;
+  newSC = (ScopeList)malloc(sizeof(struct ScopeListRec));
+  newSC->name = name;
 
-  return newScope;
+  /* depth는 현재 stack에 쌓여있는 스코프의 수가 된다.*/
+  newSC->depth = stack_idx;
+  /* 새로운 스코프의 부모는 현재 스택의 맨 위에 있는 스코프이다. */
+  newSC->parent = now_scope();
+
+  /* 스코프 주소값 등록 */
+  scopes[scope_idx++] = newSC;
+
+ 
+  return newSC;
 }
 
 ScopeList now_scope( void )

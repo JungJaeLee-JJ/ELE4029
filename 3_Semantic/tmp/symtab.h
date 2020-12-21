@@ -57,7 +57,7 @@ int st_lookup_top ( char * name );
 BucketList bk_lookup ( char * name );
 
 /* Stack for static scope */
-ScopeList scope_create ( char * function_name );
+ScopeList scope_create (char * name);
 ScopeList now_scope ( void );
 void scope_sub ( void );
 void scope_add ( ScopeList scope );
