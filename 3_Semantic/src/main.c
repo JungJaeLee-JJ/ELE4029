@@ -76,10 +76,11 @@ main( int argc, char * argv[] )
   { 
     /* 12.12 분석 함수 수정 */
     if(TraceAnalyze) fprintf(listing,"\nBuilding Symbol Table...\n");
-    buildSymtab(syntaxTree);
+    buildSymtab(syntaxTree,listing);
     if(TraceAnalyze) fprintf(listing,"\nChecking Types...\n");
     typeCheck(syntaxTree);
     if(TraceAnalyze) fprintf(listing,"\nType Checking Finished\n");
+
     if (TraceAnalyze && !Error){
       printSymTab(listing);
       print_Function_Table(listing);
