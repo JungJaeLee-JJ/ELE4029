@@ -38,41 +38,34 @@ typedef struct ScopeListRec {
     int memidx;
     struct ScopeListRec * parent;
 } * ScopeList;
- 
+
 
 /* Procedure st_insert inserts line numbers and
  * memory locations into the symbol table
- * loc = memory location is inserted only the
+ * loc = memory location is inserted only thse
  * first time, otherwise ignored
  */
 void st_insert( char * name, TreeNode * node, int lineno, int loc );
-
-/* Function st_lookup returns the memory 
- * location of a variable or -1 if not found
- */
-int st_lookup (char * name );
-void line_add( char * name, int lineno );
+int st_lookup ( char * name );
 int st_lookup_top ( char * name );
-
 BucketList bk_lookup ( char * name );
 
-/* Stack for static scope */
+/* 12.21 추가 */
+void scope_add(ScopeList scope);
+void scope_sub();
+ScopeList now_scope();
+int loc_add ();
+void lineno_add ( char * name, int lineno );
+
 ScopeList scope_create (char * name);
-ScopeList now_scope ( void );
-void scope_sub ( void );
-void scope_add ( ScopeList scope );
-// void scope_sub ( void );
-// void scope_add ( ScopeList scope );
-int loc_add ( void );
 
 /* Procedure printSymTab prints a formatted 
  * listing of the symbol table contents 
  * to the listing file
  */
 void printSymTab(FILE * listing);
-void print_SymTab(FILE * listing);
-void print_FuncTab(FILE * listing);
-void print_Func_globVar(FILE * listing);
-void print_FuncP_N_LoclVar(FILE * listing);
+void print_Function_Table (FILE * listing);
+void print_Function_and_GlobalVariables(FILE * listing);
+void print_FunctionParameter_and_LocalVariables (FILE * listing);
 
 #endif
