@@ -435,8 +435,8 @@ static void beforeCheckNode(TreeNode * t)
 { switch (t->nodekind)
   { case DeclK:
       switch (t->kind.decl)
-      { case FuncK:
-          funcName = t->attr.name;
+      { case FunK:
+          function_name = t->attr.name;
           break;
         default:
           break;
@@ -445,7 +445,9 @@ static void beforeCheckNode(TreeNode * t)
     case StmtK:
       switch (t->kind.stmt)
       { case CompK:
+          /*
           sc_push(t->attr.scope);
+          */
           break;
         default:
           break;
@@ -455,6 +457,7 @@ static void beforeCheckNode(TreeNode * t)
       break;
   }
 }
+
 
 
 /* Procedure typeCheck performs type checking 
