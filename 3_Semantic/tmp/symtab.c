@@ -149,7 +149,7 @@ void scope_sub(){
 // 스코프 스택에 추가
 void scope_add(ScopeList scope){
   stack[stack_idx] = scope;
-  loc[stack_idx++] = 0;
+  loc_arr[stack_idx++] = 0;
 }
 
 
