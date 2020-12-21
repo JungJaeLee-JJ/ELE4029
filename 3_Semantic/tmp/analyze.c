@@ -186,9 +186,8 @@ static void insertNode( TreeNode * t )
   }
 }
 
-static void afterInsertNode(TreeNode * t)
-{ if (t->nodekind == StmtK && t->kind.stmt == CompK)
-    scope_sub();
+static void backToParent(TreeNode * t){ 
+  if (t->nodekind == StmtK && t->kind.stmt == CompK) scope_sub();
 }
 
 /* Function buildSymtab constructs the symbol 
