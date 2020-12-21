@@ -309,7 +309,7 @@ static void checkNode(TreeNode * t)
             typeError(t->child[0],"invalid loop condition type");
           break;
         case ReturnK:
-        { TreeNode * retFunc = get_bucket(funcName)->treeNode;
+        { TreeNode * retFunc = get_bucket(funcName)->node;
           if ((retFunc->type == Void && t->child[0] != NULL) ||
               (retFunc->type == Integer && 
               (t->child[0] == NULL || t->child[0]->type == Void || t->child[0]->type == ArrayInteger)))
@@ -363,7 +363,7 @@ static void checkNode(TreeNode * t)
             break;
 
           TreeNode * symbolNode = NULL;
-          symbolNode = l->treeNode;
+          symbolNode = l->node;
 
           if (t->kind.exp == ArrIdK)
           { if ((symbolNode->nodekind == DeclK && symbolNode->kind.decl != ArrVarK)
@@ -384,7 +384,7 @@ static void checkNode(TreeNode * t)
 
           if (l == NULL)
             break;
-          funcNode = l->treeNode;
+          funcNode = l->node;
           arg = t->child[0];
           param = funcNode->child[1];
 

@@ -9,44 +9,37 @@
 #ifndef _SYMTAB_H_
 #define _SYMTAB_H_
 
-/* SIZE is the size of the hash table */
-#define SIZE 211
 
+/* 12.12 추가 */
 #include "globals.h"
+#define MAX_BUCKET 100
 
-/* the list of line numbers of the source 
- * code in which a variable is referenced
- */
-typedef struct LineListRec
-   { int lineno;
-     struct LineListRec * next;
-   } * LineList;
+#define MAX_SC 500
 
-/* The record in the bucket lists for
- * each variable, including name, 
- * assigned memory location, and
- * the list of line numbers in which
- * it appears in the source code
- */
-typedef struct BucketListRec
-   { char * name;
-     TreeNode * treeNode;  /* tree node that having variable */
-     LineList lines;
-     int memloc ; /* memory location for variable */
-     struct BucketListRec * next;
-   } * BucketList;
+/* 12.12 symbol이 사용되는 line들을 link the list 형태로 구현 */
+typedef struct LineListRec{ 
+    int lineno;
+    struct LineListRec * next;
+} * LineList;
 
-/* The record for each scope
- * including name, its bucket,
- * and parent scope.
- */
- typedef struct ScopeListRec
-   { char * funcName;
-     BucketList hashTable[SIZE]; /* the hash table */
-     struct ScopeListRec * parent;
-     int nestedLevel;
-   } * ScopeList;
+/* 12.12 추가 */
+typedef struct BucketListRec { 
+    char * name;
+    TreeNode * node;  
+    LineList lines;
+    int memloc ;
+    struct BucketListRec * next;
+} * BucketList;
 
+typedef struct ScopeListRec { 
+    char * name;
+    BucketList bucket[MAX_BUCKET]; /* the hash table */
+    int depth;
+    int memidx;
+    struct ScopeListRec * parent;
+} * ScopeList;
+ 
+ 
 /* Procedure st_insert inserts line numbers and
  * memory locations into the symbol table
  * loc = memory location is inserted only the

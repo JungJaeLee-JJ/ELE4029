@@ -24,7 +24,7 @@ static int hash ( char * key )
 { int temp = 0;
   int i = 0;
   while (key[i] != '\0')
-  { temp = ((temp << SHIFT) + key[i]) % SIZE;
+  { temp = ((temp << SHIFT) + key[i]) % MAX_BUCKET;
     ++i;
   }
   return temp;
@@ -42,7 +42,7 @@ int cntScope = 0, cntScopeStack = 0, location[MAX_SCOPES];
 void st_insert( char * name, int lineno, int loc, TreeNode * treeNode )
 { int h = hash(name);
   ScopeList nowScope = sc_top();
-  BucketList l =  nowScope->hashTable[h];
+  BucketList l =  nowScope->bucket[h];
   while ((l != NULL) && (strcmp(name,l->name) != 0))
     l = l->next;
   if (l == NULL) /* variable not yet in table */
@@ -50,13 +50,13 @@ void st_insert( char * name, int lineno, int loc, TreeNode * treeNode )
     //printf("variable not in table %d\n",loc);
     l = (BucketList) malloc(sizeof(struct BucketListRec));
     l->name = name;
-    l->treeNode = treeNode;
+    l->node = treeNode;
     l->lines = (LineList) malloc(sizeof(struct LineListRec));
     l->lines->lineno = lineno;
     l->memloc = loc;
     l->lines->next = NULL;
-    l->next = nowScope->hashTable[h];
-    nowScope->hashTable[h] = l; 
+    l->next = nowScope->bucket[h];
+    nowScope->bucket[h] = l; 
   }
   else /* found in table, so just add line number */
   { 
@@ -91,7 +91,7 @@ int st_lookup_top ( char * name )
 { int h = hash(name);
   ScopeList nowScope = sc_top();
   //while(nowScope != NULL)
-   BucketList l = nowScope->hashTable[h];
+   BucketList l = nowScope->bucket[h];
     while((l != NULL) && (strcmp(name,l->name) != 0))
       l = l->next;
     if(l != NULL)
@@ -105,7 +105,7 @@ BucketList get_bucket ( char * name )
 { int h = hash(name);
   ScopeList nowScope = sc_top();
   while(nowScope != NULL)
-  { BucketList l = nowScope->hashTable[h];
+  { BucketList l = nowScope->bucket[h];
     while((l != NULL) && (strcmp(name,l->name) != 0) )
       l = l->next;
     if(l != NULL)
@@ -119,8 +119,8 @@ BucketList get_bucket ( char * name )
 ScopeList sc_create ( char * funcName )
 { ScopeList newScope;
   newScope = (ScopeList) malloc(sizeof(struct ScopeListRec));
-  newScope->funcName = funcName;
-  newScope->nestedLevel = cntScopeStack;
+  newScope->name = funcName;
+  newScope->depth = cntScopeStack;
   newScope->parent = sc_top();
   scopes[cntScope++] = newScope;
 
@@ -170,12 +170,12 @@ void print_SymTab(FILE * listing)
 
   for (i = 0; i < cntScope; i++)
   { ScopeList nowScope = scopes[i];
-    BucketList * hashTable = nowScope->hashTable;
+    BucketList * hashTable = nowScope->bucket;
 
-    for (j = 0; j < SIZE; j++)
+    for (j = 0; j < MAX_BUCKET; j++)
     { if(hashTable[j] != NULL)
       { BucketList bl = hashTable[j];
-        TreeNode * node = bl->treeNode;
+        TreeNode * node = bl->node;
 
         while(bl != NULL)
         { LineList ll = bl->lines;
@@ -222,7 +222,7 @@ void print_SymTab(FILE * listing)
               break;
           }
 
-          fprintf(listing,"%-12s",nowScope->funcName);
+          fprintf(listing,"%-12s",nowScope->name);
           fprintf(listing,"%-10d",bl->memloc);
           while(ll != NULL)
           { fprintf(listing,"%4d",ll->lineno);
@@ -245,19 +245,19 @@ void print_FuncTab(FILE * listing)
 
   for (i = 0; i < cntScope; i++)
   { ScopeList nowScope = scopes[i];
-    BucketList * hashTable = nowScope->hashTable;
+    BucketList * hashTable = nowScope->bucket;
 
-    for (j = 0; j < SIZE; j++)
+    for (j = 0; j < MAX_BUCKET; j++)
     { if(hashTable[j] != NULL)
       { BucketList bl = hashTable[j];
-        TreeNode * node = bl->treeNode;
+        TreeNode * node = bl->node;
 
         while(bl != NULL)
         { switch (node->nodekind)
           { case DeclK:
               if(node->kind.decl == FunK)  /* Function print */
               { fprintf(listing,"%-15s",bl->name);
-                fprintf(listing,"%-12s",nowScope->funcName);
+                fprintf(listing,"%-12s",nowScope->name);
                 switch (node->type)
                 { case Void:
                     fprintf(listing,"%-13s","Void");
@@ -272,14 +272,14 @@ void print_FuncTab(FILE * listing)
                 int noParam = TRUE;
                 for (k = 0; k < cntScope; k++)
                 { ScopeList paramScope = scopes[k];
-                  if (strcmp(paramScope->funcName, bl->name) != 0)
+                  if (strcmp(paramScope->name, bl->name) != 0)
                     continue;
-                  BucketList * paramhashTable = paramScope->hashTable;                  //printf("c\n");
+                  BucketList * paramhashTable = paramScope->bucket;                  //printf("c\n");
 
-                  for (l = 0; l < SIZE; l++)
+                  for (l = 0; l < MAX_BUCKET; l++)
                   { if(paramhashTable[l] != NULL)
                     { BucketList pbl = paramhashTable[l];
-                      TreeNode * pnode = pbl->treeNode;
+                      TreeNode * pnode = pbl->node;
 
                       while(pbl != NULL)
                       { switch (pnode->nodekind)
@@ -337,15 +337,15 @@ void print_Func_globVar(FILE * listing)
 
   for (i = 0; i < cntScope; i++)
   { ScopeList nowScope = scopes[i];
-    if (strcmp(nowScope->funcName, "global") != 0)
+    if (strcmp(nowScope->name, "global") != 0)
       continue;
 
-    BucketList * hashTable = nowScope->hashTable;
+    BucketList * hashTable = nowScope->bucket;
 
-    for (j = 0; j < SIZE; j++)
+    for (j = 0; j < MAX_BUCKET; j++)
     { if(hashTable[j] != NULL)
       { BucketList bl = hashTable[j];
-        TreeNode * node = bl->treeNode;
+        TreeNode * node = bl->node;
 
         while(bl != NULL)
         { switch (node->nodekind)
@@ -407,23 +407,23 @@ void print_FuncP_N_LoclVar(FILE * listing)
 
   for (i = 0; i < cntScope; i++)
   { ScopeList nowScope = scopes[i];
-    if (strcmp(nowScope->funcName, "global") == 0)
+    if (strcmp(nowScope->name, "global") == 0)
       continue;
-    BucketList * hashTable = nowScope->hashTable;
+    BucketList * hashTable = nowScope->bucket;
     //fprintf(listing,"%s\n",nowScope->funcName); 
 
     int noParamVar = TRUE;
-    for (j = 0; j < SIZE; j++)
+    for (j = 0; j < MAX_BUCKET; j++)
     { if(hashTable[j] != NULL)
       { BucketList bl = hashTable[j];
-        TreeNode * node = bl->treeNode;
+        TreeNode * node = bl->node;
 
         while(bl != NULL)
         { switch (node->nodekind)
           { case DeclK:
               noParamVar = FALSE;
-              fprintf(listing,"%-16s",nowScope->funcName);
-              fprintf(listing,"%-14d",nowScope->nestedLevel);
+              fprintf(listing,"%-16s",nowScope->name);
+              fprintf(listing,"%-14d",nowScope->depth);
               switch (node->kind.decl)
               { case VarK:
                   switch (node->type)
@@ -450,8 +450,8 @@ void print_FuncP_N_LoclVar(FILE * listing)
               break;              
             case ParamK:
               noParamVar = FALSE;
-              fprintf(listing,"%-16s",nowScope->funcName);
-              fprintf(listing,"%-14d",nowScope->nestedLevel);
+              fprintf(listing,"%-16s",nowScope->name);
+              fprintf(listing,"%-14d",nowScope->depth);
               switch (node->kind.param)
               { case ArrParamK:
                   fprintf(listing,"%-15s",node->attr.name);
