@@ -33,7 +33,10 @@
 /* allocate global variables */
 int lineno = 0;
 FILE * source;
-FILE * listing;
+
+/* 12.21 extern 으로 수정*/
+
+extern FILE * listing;
 FILE * code;
 
 /* allocate and set tracing flags */

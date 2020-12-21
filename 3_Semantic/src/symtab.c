@@ -41,20 +41,22 @@ static int hash ( char * key )
 
 
 void st_insert( char * name, TreeNode * node, int lineno, int loc ){ 
-
+  fprintf(listing,"1\n");
   int h = hash(name);
   ScopeList nowSC = now_scope();
   BucketList l =  nowSC->bucket[h];
+  fprintf(listing,"2\n");
 
   /* Bucket list 순회 */
   while ((l != NULL) && (strcmp(name,l->name) != 0)) l = l->next;
+  fprintf(listing,"3\n");
 
   /* 선언되지 않은경우 해당 변수를 테이블에 삽입 */
   if (l == NULL) { 
     l = (BucketList) malloc(sizeof(struct BucketListRec));
     l->name = name;
     l->node = node;
-    
+    fprintf(listing,"4\n");
     /* line number 추가 */
     l->lines = (LineList) malloc(sizeof(struct LineListRec));
     l->lines->lineno = lineno;
@@ -64,6 +66,7 @@ void st_insert( char * name, TreeNode * node, int lineno, int loc ){
     /* 맨 앞에 삽입 */
     l->next = nowSC->bucket[h];
     nowSC->bucket[h] = l;   
+    fprintf(listing,"5\n");
 
   }
   /* 이미 선언된 경우 line number만 추가 */
@@ -73,7 +76,9 @@ void st_insert( char * name, TreeNode * node, int lineno, int loc ){
     t->next = (LineList) malloc(sizeof(struct LineListRec));
     t->next->lineno = lineno;
     t->next->next = NULL;
+    fprintf(listing,"6\n");
   }
+  fprintf(listing,"7\n");
 } /* st_insert */
 
 /* Function st_lookup returns the memory 
