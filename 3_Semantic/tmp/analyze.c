@@ -224,7 +224,7 @@ void buildSymtab(TreeNode * syntaxTree)
 
 
 
-  st_insert("input",function,0,loc_add());
+  st_insert("input",function,0,addLocation());
 
 
 
@@ -251,7 +251,7 @@ void buildSymtab(TreeNode * syntaxTree)
   function->child[1] = parameter;
   function->child[2] = comp; 
 
-  st_insert("output",function,0,loc_add());
+  st_insert("output",function,0,addLocation());
 
 
   traverse(syntaxTree, insertNode, afterInsertNode);
