@@ -80,8 +80,8 @@ main( int argc, char * argv[] )
     if(TraceAnalyze) fprintf(listing,"\nChecking Types...\n");
     typeCheck(syntaxTree);
     if(TraceAnalyze) fprintf(listing,"\nType Checking Finished\n");
-
-    if (TraceAnalyze && !Error){
+    //if (TraceAnalyze && !Error){
+    if (TraceAnalyze){
       printSymTab(listing);
       print_Function_Table(listing);
       print_Function_and_GlobalVariables(listing);
