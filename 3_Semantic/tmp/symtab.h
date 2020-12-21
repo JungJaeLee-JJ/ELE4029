@@ -51,7 +51,7 @@ void st_insert( char * name, TreeNode * node, int lineno, int loc );
  * location of a variable or -1 if not found
  */
 int st_lookup (char * name );
-void st_add_lineno( char * name, int lineno );
+void line_add( char * name, int lineno );
 int st_lookup_top ( char * name );
 
 BucketList bk_lookup ( char * name );
