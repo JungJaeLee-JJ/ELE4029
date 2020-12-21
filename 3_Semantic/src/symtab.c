@@ -371,7 +371,7 @@ void print_Function_and_GlobalVariables(FILE * listing){
   int sc_idx,bk_idx;
 
   fprintf(listing,"< Function and Global Variables >\n");
-  fprintf(listing,"   ID Name      ID Type    Data Type \n");
+  fprintf(listing,"ID Name        ID Type    Data Type \n");
   fprintf(listing,"-------------  ---------  -----------\n");
 
   for(sc_idx = 0; sc_idx < scope_idx; sc_idx++){
@@ -451,7 +451,7 @@ void print_FunctionParameter_and_LocalVariables (FILE * listing){
   int sc_idx,bk_idx;
 
   fprintf(listing,"< Function Parameter and Local Variables >\n");
-  fprintf(listing,"  Scope Name    Nested Level     ID Name      Data Type \n");
+  fprintf(listing,"Scope Name      Nested Level  ID Name        Data Type \n");
   fprintf(listing,"--------------  ------------  -------------  -----------\n");
 
 
