@@ -19,13 +19,15 @@
 
 #define SHIFT 4
 
-/* 스코프 최대 갯수 */
+/* 스코프 배열 */
 ScopeList scopes[MAX_SC];
 int scope_idx = 0;
 
+/* 스코프 스택 */
 ScopeList stack[MAX_SC];
 int stack_idx = 0;
 
+/* 스코프 위치 */
 int loc_arr[MAX_SC];
 
 
@@ -149,210 +151,212 @@ int loc_add ( void )
  * to the listing file
  */
 
-void printSymTab(FILE * listing)
-{ print_SymTab(listing);
-  fprintf(listing,"\n");
-  print_FuncTab(listing);
-  fprintf(listing,"\n");
-  print_Func_globVar(listing);
-  fprintf(listing,"\n");
-  print_FuncP_N_LoclVar(listing);
-} /* printSymTab */
+void printSymTab(FILE * listing){ 
+  int sc_idx,bk_idx;
 
-void print_SymTab(FILE * listing)
-{ int i, j;
-  fprintf(listing,"< Symbol Table >\n");
-  fprintf(listing,"Variable Name  Variable Type  Scope Name  Location  Line Numbers\n");
-  fprintf(listing,"-------------  -------------  ----------  --------  ------------\n");
+  fprintf(listing,"Name           Type           Location  Scope      Line Numbers\n");
+  fprintf(listing,"-------------  -------------  --------  ---------- ------------\n");
 
-  for (i = 0; i < scope_idx; i++)
-  { ScopeList nowScope = scopes[i];
-    BucketList * hashTable = nowScope->bucket;
+  for(sc_idx = 0; sc_idx < scope_idx; sc_idx++){
 
-    for (j = 0; j < MAX_BUCKET; j++)
-    { if(hashTable[j] != NULL)
-      { BucketList bl = hashTable[j];
-        TreeNode * node = bl->node;
+    ScopeList nowSC = scopes[sc_idx];
+    BucketList * l =  nowSC->bucket;  
 
-        while(bl != NULL)
-        { LineList ll = bl->lines;
-          fprintf(listing,"%-15s",bl->name);
+    /* 해당 심볼 테이블 내의 모든 버킷 순회 */
+    for(bk_idx =0; bk_idx < MAX_BUCKET; bk_idx++){ 
+      
+      if (l[bk_idx] != NULL){ 
+    
+        BucketList nowBK = l[bk_idx];
 
-          switch (node->nodekind)
-          { case DeclK:
-              switch (node->kind.decl)
-              { case FunK:
-                  fprintf(listing,"%-15s","Function");
-                  break;
-                case VarK:
-                  switch (node->type)
-                  { case Void:
-                      fprintf(listing,"%-15s","Void");
-                      break;
-                    case Integer:
-                      fprintf(listing,"%-15s","Integer");
-                      break;
-                    default:
-                      break;
-                  }
-                  break;
-                case ArrVarK:
-                  fprintf(listing,"%-15s","IntegerArray");
-                  break;
-                default:
-                  break;
-              }
+        /* 같은 버켓에 존재하는 symbol 순회 */
+        while (nowBK != NULL){
+           /* 심볼 이름 출력 */
+          fprintf(listing,"%-15s",nowBK->name);
+  
+          TreeNode * node = nowBK->node;
+          /* 타입 출력 */
+          switch (node->type)
+          {
+            case Void:
+              fprintf(listing,"%-15s","Void");
               break;
-            case ParamK:
-              switch (node->kind.param)
-              { case ArrParamK:
-                  fprintf(listing,"%-15s","IntegerArray");
-                  break;
-                case SingleParamK:
-                  fprintf(listing,"%-15s","Integer");
-                  break;
-                default:
-                  break;
-              }
+            case Integer:
+              fprintf(listing,"%-15s","Integer");
               break;
             default:
               break;
           }
 
-          fprintf(listing,"%-12s",nowScope->name);
-          fprintf(listing,"%-10d",bl->memloc);
-          while(ll != NULL)
-          { fprintf(listing,"%4d",ll->lineno);
-            ll = ll->next;
+          /* 나머지 출력 */
+          fprintf(listing,"%-10d",nowBK->memloc);
+          fprintf(listing,"%-12s",nowSC->name);
+          LineList linelist = nowBK->lines;
+          while(linelist != NULL){ 
+            fprintf(listing,"%4d",linelist->lineno);
+            linelist = linelist->next;
           }
           fprintf(listing,"\n");
-          
-          bl = bl->next;
+
+          nowBK = nowBK->next;
         }
       }
     }
   }
-}
+} /* printSymTab */
 
-void print_FuncTab(FILE * listing)
-{ int i, j, k, l;
+
+
+void print_Function_Table (FILE * listing){ 
+  int sc_idx,bk_idx,param_sc_idx,param_bk_idx;
+
   fprintf(listing,"< Function Table >\n");
   fprintf(listing,"Function Name  Scope Name  Return Type  Parameter Name  Parameter Type\n");
   fprintf(listing,"-------------  ----------  -----------  --------------  --------------\n");
 
-  for (i = 0; i < scope_idx; i++)
-  { ScopeList nowScope = scopes[i];
-    BucketList * hashTable = nowScope->bucket;
+  for (sc_idx = 0; sc_idx < scope_idx; sc_idx++){ 
+  
+    ScopeList nowSC = scopes[sc_idx];
+    BucketList * l =  nowSC->bucket;  
 
-    for (j = 0; j < MAX_BUCKET; j++)
-    { if(hashTable[j] != NULL)
-      { BucketList bl = hashTable[j];
-        TreeNode * node = bl->node;
 
-        while(bl != NULL)
-        { switch (node->nodekind)
-          { case DeclK:
-              if(node->kind.decl == FunK)  /* Function print */
-              { fprintf(listing,"%-15s",bl->name);
-                fprintf(listing,"%-12s",nowScope->name);
-                switch (node->type)
-                { case Void:
-                    fprintf(listing,"%-13s","Void");
-                    break;
-                  case Integer:
-                    fprintf(listing,"%-13s","Integer");
-                    break;
-                  default:
-                    break;
-                }
+        /* 해당 심볼 테이블 내의 모든 버킷 순회 */
+    for(bk_idx =0; bk_idx < MAX_BUCKET; bk_idx++){ 
+      
+      if (l[bk_idx] != NULL){ 
+    
+        BucketList nowBK = l[bk_idx];
 
-                int noParam = TRUE;
-                for (k = 0; k < scope_idx; k++)
-                { ScopeList paramScope = scopes[k];
-                  if (strcmp(paramScope->name, bl->name) != 0)
-                    continue;
-                  BucketList * paramhashTable = paramScope->bucket;                  //printf("c\n");
+        /* 같은 버켓에 존재하는 symbol 순회 */
+        while (nowBK != NULL){
+  
+          TreeNode * node = nowBK->node;
+          switch (node->nodekind)
+          {
+             /* 선언 일 때 */
+            case DeclK:
 
-                  for (l = 0; l < MAX_BUCKET; l++)
-                  { if(paramhashTable[l] != NULL)
-                    { BucketList pbl = paramhashTable[l];
-                      TreeNode * pnode = pbl->node;
+              /* 함수만 출력 */
+              if (node->kind.decl != FunK) continue;
 
-                      while(pbl != NULL)
-                      { switch (pnode->nodekind)
-                        { case ParamK:
-                            noParam = FALSE;
-                            fprintf(listing,"\n");
-                            fprintf(listing,"%-40s","");
-                            fprintf(listing,"%-16s",pbl->name);
-                            switch (pnode->type)
-                            { case Integer:
-                                fprintf(listing,"%-14s","Integer");
-                                break;
-                              case ArrayInteger:
-                                fprintf(listing,"%-14s","IntegerArray");
-                                break;
-                              default:
-                                break;
-                            }
-                            break;
-                          default:
-                            break;
-                        }
-                        pbl = pbl->next;
+              fprintf(listing,"%-15s",nowBK->name);
+              fprintf(listing,"%-12s",nowSC->name);
+
+              /* return type */
+              switch (node->type)
+              {
+                case Void:
+                  fprintf(listing,"%-13s","Void");
+                  break;
+                case Integer:
+                  fprintf(listing,"%-13s","Integer");
+                  break;
+                default:
+                  break;
+              }
+
+              /* 파라미터 찾기 */
+              int no_param = 1;
+              for(param_sc_idx = 0; param_sc_idx < scope_idx; param_sc_idx++){
+                ScopeList paramSC = scopes[param_sc_idx];
+                if (strcmp(paramSC->name, nowBK->name) != 0) continue;
+                BucketList * param_l =  paramSC->bucket;  
+
+                /* 버켓들 순회 */
+                for(param_bk_idx = 0; param_bk_idx < MAX_BUCKET;param_bk_idx++){
+
+                  if (param_l[param_bk_idx] != NULL){
+                      BucketList paramBK = param_l[param_bk_idx];
+                      TreeNode * param_node = paramBK->node;
+
+                    /* 1개 버켓 순회 */
+                    while (paramBK != NULL){
+                      switch (param_node->nodekind)
+                      {
+                        case ParamK:
+                          no_param = 1;
+                          fprintf(listing,"\n");
+                          fprintf(listing,"%-40s","");
+                          fprintf(listing,"%-16s",paramBK->name);
+                          switch (param_node->nodekind)
+                          {
+                            case Integer:
+                              fprintf(listing,"%-14s","Integer");
+                              break;
+                            case ArrayInteger:
+                              fprintf(listing,"%-14s","ArrayInteger");
+                              break;
+                            default:
+                              break;
+                          }
+                          break;
+                        default:
+                          break;
                       }
+                      BucketList paramBK = paramBK->next;
                     }
                   }
-                  break;
                 }
-                if (noParam)
-                { fprintf(listing,"%-16s","");
-                  if (strcmp(bl->name, "output") != 0)
-                    fprintf(listing,"%-14s","Void");
-                  else 
-                    fprintf(listing,"\n%-56s%-14s","","Integer");
-                }
+              break;
+            }
+            if(no_param){
+              fprintf(listing,"%-16s","");
+              if (strcmp(nowBK->name, "output") != 0) fprintf(listing,"%-14s","Void");
+              else  fprintf(listing,"\n%-56s%-14s","","Integer");
+            }
 
-                fprintf(listing,"\n");
-              }
-              break;
-            default:
-              break;
-          }          
-          bl = bl->next;
+            fprintf(listing,"\n");
+
+            break;
+          default:
+            break;
+          }
+          nowBK = nowBK->next;
         }
       }
     }
   }
 }
 
-void print_Func_globVar(FILE * listing)
-{ int i, j;
+
+
+void print_Function_and_GlobalVariables(FILE * listing){ 
+  
+  int sc_idx,bk_idx;
+
   fprintf(listing,"< Function and Global Variables >\n");
   fprintf(listing,"   ID Name      ID Type    Data Type \n");
   fprintf(listing,"-------------  ---------  -----------\n");
 
-  for (i = 0; i < scope_idx; i++)
-  { ScopeList nowScope = scopes[i];
-    if (strcmp(nowScope->name, "global") != 0)
-      continue;
+  for(sc_idx = 0; sc_idx < scope_idx; sc_idx++){
 
-    BucketList * hashTable = nowScope->bucket;
+    ScopeList nowSC = scopes[sc_idx];
 
-    for (j = 0; j < MAX_BUCKET; j++)
-    { if(hashTable[j] != NULL)
-      { BucketList bl = hashTable[j];
-        TreeNode * node = bl->node;
+    /* globa만 확인 */
+    if(strcmp(nowSC->name, "global") != 0) continue;
 
-        while(bl != NULL)
-        { switch (node->nodekind)
-          { case DeclK:
-              fprintf(listing,"%-15s",bl->name);
+    BucketList * l =  nowSC->bucket;  
+
+    /* 해당 심볼 테이블 내의 모든 버킷 순회 */
+    for(bk_idx =0; bk_idx < MAX_BUCKET; bk_idx++){ 
+      
+      if (l[bk_idx] != NULL){ 
+    
+        BucketList nowBK = l[bk_idx];
+        /* 같은 버켓에 존재하는 symbol 순회 */
+        while (nowBK != NULL){
+          TreeNode * node = nowBK->node;
+          switch (node->nodekind)
+          { 
+            case DeclK:
+              fprintf(listing,"%-15s",nowBK->name);
               switch (node->kind.decl)
-              { case FunK:
+              { 
+                case FunK:
                   fprintf(listing,"%-11s","Function");
                   switch (node->type)
-                  { case Void:
+                  { 
+                    case Void:
                       fprintf(listing,"%-11s","Void");
                       break;
                     case Integer:
@@ -363,13 +367,13 @@ void print_Func_globVar(FILE * listing)
                   }
                   break;
                 case VarK:
+                  fprintf(listing,"%-11s","Variable");
                   switch (node->type)
-                  { case Void:
-                      fprintf(listing,"%-11s","Variable");
+                  { 
+                    case Void:
                       fprintf(listing,"%-11s","Void");
                       break;
                     case Integer:
-                      fprintf(listing,"%-11s","Variable");
                       fprintf(listing,"%-11s","Integer");
                       break;
                     default:
@@ -378,7 +382,7 @@ void print_Func_globVar(FILE * listing)
                   break;
                 case ArrVarK:
                   fprintf(listing,"%-11s","Variable");
-                  fprintf(listing,"%-15s","IntegerArray");
+                  fprintf(listing,"%-15s","ArrayInteger");
                   break;
                 default:
                   break;
@@ -388,43 +392,58 @@ void print_Func_globVar(FILE * listing)
             default:
               break;
           }
-          bl = bl->next;
+          nowBK = nowBK->next;
         }
       }
     }
-    break;
   }
 }
 
-void print_FuncP_N_LoclVar(FILE * listing)
-{ int i, j;
+
+void print_FunctionParameter_and_LocalVariables (FILE * listing){ 
+  
+  int sc_idx,bk_idx;
+
   fprintf(listing,"< Function Parameter and Local Variables >\n");
   fprintf(listing,"  Scope Name    Nested Level     ID Name      Data Type \n");
   fprintf(listing,"--------------  ------------  -------------  -----------\n");
 
-  for (i = 0; i < scope_idx; i++)
-  { ScopeList nowScope = scopes[i];
-    if (strcmp(nowScope->name, "global") == 0)
-      continue;
-    BucketList * hashTable = nowScope->bucket;
-    //fprintf(listing,"%s\n",nowScope->function_name); 
 
-    int noParamVar = TRUE;
-    for (j = 0; j < MAX_BUCKET; j++)
-    { if(hashTable[j] != NULL)
-      { BucketList bl = hashTable[j];
-        TreeNode * node = bl->node;
+  for(sc_idx = 0; sc_idx < scope_idx; sc_idx++){
 
-        while(bl != NULL)
-        { switch (node->nodekind)
-          { case DeclK:
-              noParamVar = FALSE;
-              fprintf(listing,"%-16s",nowScope->name);
-              fprintf(listing,"%-14d",nowScope->depth);
+    ScopeList nowSC = scopes[sc_idx];
+
+    /* globa만 확인 */
+    if(strcmp(nowSC->name, "global") != 0) continue;
+
+    BucketList * l =  nowSC->bucket;  
+
+    int no_param = 1;
+
+    /* 해당 심볼 테이블 내의 모든 버킷 순회 */
+    for(bk_idx =0; bk_idx < MAX_BUCKET; bk_idx++){ 
+      
+      if (l[bk_idx] != NULL){ 
+    
+        BucketList nowBK = l[bk_idx];
+        /* 같은 버켓에 존재하는 symbol 순회 */
+        while (nowBK != NULL){
+          TreeNode * node = nowBK->node;
+        
+          switch (node->nodekind)
+          { 
+            case DeclK:
+
+              no_param = 0;
+              fprintf(listing,"%-16s",nowSC->name);
+              fprintf(listing,"%-14d",nowSC->depth);
+
               switch (node->kind.decl)
-              { case VarK:
+              { 
+                case VarK:
                   switch (node->type)
-                  { case Void:
+                  { 
+                    case Void:
                       fprintf(listing,"%-15s",node->attr.name);
                       fprintf(listing,"%-11s","Void");
                       break;
@@ -438,7 +457,7 @@ void print_FuncP_N_LoclVar(FILE * listing)
                   break;
                 case ArrVarK:
                   fprintf(listing,"%-15s",node->attr.arr.name);
-                  fprintf(listing,"%-11s","IntegerArray");
+                  fprintf(listing,"%-11s","ArrayInteger");
                   break;
                 default:
                   break;
@@ -446,13 +465,13 @@ void print_FuncP_N_LoclVar(FILE * listing)
               fprintf(listing,"\n");
               break;              
             case ParamK:
-              noParamVar = FALSE;
-              fprintf(listing,"%-16s",nowScope->name);
-              fprintf(listing,"%-14d",nowScope->depth);
+              no_param = 0;
+              fprintf(listing,"%-16s",nowSC->name);
+              fprintf(listing,"%-14d",nowSC->depth);
               switch (node->kind.param)
               { case ArrParamK:
                   fprintf(listing,"%-15s",node->attr.name);
-                  fprintf(listing,"%-11s","IntegerArray");
+                  fprintf(listing,"%-11s","ArrayInteger");
                   break;
                 case SingleParamK:
                   fprintf(listing,"%-15s",node->attr.name);
@@ -466,11 +485,11 @@ void print_FuncP_N_LoclVar(FILE * listing)
             default:
               break;
           }
-          bl = bl->next;
+          nowBK = nowBK->next;
         }
       }
     }
-    if (!noParamVar)
-      fprintf(listing,"\n");
+    if (!no_param) fprintf(listing,"\n");
   }
 }
+
