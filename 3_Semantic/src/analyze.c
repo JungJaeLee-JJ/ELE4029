@@ -13,13 +13,12 @@
 /* 12.12 */
 #include "util.h"
 
-ScopeList * nowSC;
-ScopeList * globalSC;
+ScopeList globalSC = NULL;
 
 /* 현재 scope 갯수 */
 int scope_index = 0;
 char * function_name;
-
+int vari_idx =0;
 int isInScope = 0;
 
 
@@ -102,9 +101,11 @@ static void insertNode( TreeNode * t )
         case CompK:
             if(isInScope) isInScope = FALSE;
             else {
-              ScopeList scope = scope_create(nowSC, function_name);
-              nowSC = &scope;
+              ScopeList scope = scope_create(function_name);
+              scope_add(scope);
+              location++;
             }
+            t->scope = now_scope();
           break;
         default:
           break;
@@ -117,9 +118,9 @@ static void insertNode( TreeNode * t )
         case ArrIdK:
         case CallK:
           /* 만약 선언되지 않은 경우 에러*/
-          if (st_lookup(nowSC,t->attr.name) == -1) undefinedError(t);
+          if (st_lookup(t->attr.name) == -1) undefinedError(t);
            /* 선언되었다면 line number만 추가 */
-          else st_insert(nowSC,t->attr.name, t, t->lineno, (*nowSC)->memidx);
+          else st_insert(t->attr.name, t, t->lineno,-100);
           break;
 
         default:
@@ -132,19 +133,20 @@ static void insertNode( TreeNode * t )
           function_name = t->attr.name;
 
           /* 현재 스코프에서 해당 이름이 이미 사용된 경우 */
-          if (st_lookup(nowSC,t->attr.name) != -1) { 
+          if (st_lookup(t->attr.name) != -1) { 
             redefinedError(t);
             break;
           }
 
           /* 함수를 선언하였는데, 현재 스코프가 글로벌 스코프가 아닌 경우 */
-          if (nowSC != globalSC){ 
+          if (now_scope() != globalSC){ 
             funcDeclNotGlobal(t);
             break;
           }
 
-          st_insert(nowSC,function_name, t, t->lineno, (*nowSC)->memidx);    
-
+          st_insert(function_name, t, t->lineno, loc_add());   
+          ScopeList tmp = scope_create(function_name);
+          scope_add(tmp); 
           isInScope = TRUE;
           
           switch (t->child[0]->attr.type)
@@ -170,7 +172,7 @@ static void insertNode( TreeNode * t )
               t->type = ArrayInteger;
             }
             
-            if (st_lookup(nowSC, name) < 0) st_insert(nowSC,name, t, t->lineno, (*nowSC)->memidx);    
+            if (st_lookup(name) < 0) st_insert(name, t, t->lineno, loc_add());    
             else redefinedError(t);
           }
           break;
@@ -181,8 +183,8 @@ static void insertNode( TreeNode * t )
     case ParamK:
         if (t->child[0]->attr.type == VOID) break;
         
-        if (st_lookup(nowSC, t->attr.name) == -1){ 
-          st_insert(nowSC,t->attr.name, t, t->lineno, (*nowSC)->memidx);    
+        if (st_lookup(t->attr.name) == -1){ 
+          st_insert(t->attr.name, t, t->lineno, loc_add());    
 
           if(t->kind.param == SingleParamK) t->type = Integer;
           else t->type = ArrayInteger;
@@ -194,7 +196,7 @@ static void insertNode( TreeNode * t )
 }
 
 static void backToParent(TreeNode * t){ 
-  if (t->nodekind == StmtK && t->kind.stmt == CompK) nowSC = &(*nowSC)->parent;
+  if (t->nodekind == StmtK && t->kind.stmt == CompK) scope_sub();
 }
 
 
@@ -204,7 +206,7 @@ static void backToParent(TreeNode * t){
 void buildSymtab(TreeNode * syntaxTree){ 
 
   /* 12.12 global scope 생성  */
-  globalSC = scope_create(NULL,"global");
+  globalSC = scope_create("global");
 
   TreeNode * function;
   TreeNode * type;
@@ -228,7 +230,7 @@ void buildSymtab(TreeNode * syntaxTree){
   function->child[1] = NULL;
   function->child[2] = comp; 
 
-  st_insert(globalSC,"input",function,0,(*globalSC)->memidx);
+  st_insert("input",function,0,loc_add());
 
   /* output() */
   function = newDeclNode(FunK);
@@ -253,7 +255,7 @@ void buildSymtab(TreeNode * syntaxTree){
   function->child[1] = parameter;
   function->child[2] = comp; 
 
-  st_insert(globalSC,"output",function,0,(*globalSC)->memidx);
+  st_insert("output",function,0,loc_add());
 
   traverse(syntaxTree,insertNode,backToParent);
 }
@@ -268,7 +270,7 @@ static void checkNode(TreeNode * t)
       switch (t->kind.stmt)
       { 
         case CompK:
-          nowSC = &(*nowSC)->parent;
+          scope_sub();
           break;
 
         /* if문 에러 */
@@ -286,7 +288,7 @@ static void checkNode(TreeNode * t)
 
         case ReturnK:
         { 
-          TreeNode * ret = bk_lookup(nowSC,function_name)->node;
+          TreeNode * ret = bk_lookup(function_name)->node;
           /* void 인데, return 파라미터가 존재하는 경우 */
           if(ret->type == Void && t->child[0] != NULL)  typeError(t,"invalid return type");
           
@@ -341,7 +343,7 @@ static void checkNode(TreeNode * t)
         case IdK:
         case ArrIdK:
         {  
-          BucketList l = bk_lookup(nowSC,t->attr.name);
+          BucketList l = bk_lookup(t->attr.name);
           if (l == NULL) break;
 
           TreeNode * symbolNode = NULL;
@@ -357,7 +359,7 @@ static void checkNode(TreeNode * t)
         }
         case CallK:
         {
-          BucketList l = bk_lookup(nowSC,t->attr.name);
+          BucketList l = bk_lookup(t->attr.name);
           TreeNode * funcNode = NULL;
           TreeNode * arg;
           TreeNode * param;

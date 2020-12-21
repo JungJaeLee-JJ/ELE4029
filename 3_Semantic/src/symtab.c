@@ -20,8 +20,13 @@
 #define SHIFT 4
 
 /* 스코프 최대 갯수 */
-ScopeList * scope_list_for_print[MAX_SC];
-extern int scope_index;
+ScopeList scopes[MAX_SC];
+int scope_idx;
+
+ScopeList stack[MAX_SC];
+int stack_idx;
+
+int loc[MAX_SC];
 
 
 static int hash ( char * key )
@@ -35,9 +40,10 @@ static int hash ( char * key )
 }
 
 
-void st_insert( ScopeList * scope, char * name, TreeNode * node, int lineno, int loc ){ 
+void st_insert( char * name, TreeNode * node, int lineno, int loc ){ 
+
   int h = hash(name);
-  ScopeList nowSC = *scope;
+  ScopeList nowSC = now_scope();
   BucketList l =  nowSC->bucket[h];
 
   /* Bucket list 순회 */
@@ -75,9 +81,9 @@ void st_insert( ScopeList * scope, char * name, TreeNode * node, int lineno, int
 /* Function st_lookup returns the memory 
  * location of a variable or -1 if not found
  */
-int st_lookup ( ScopeList * scope, char * name ){ 
+int st_lookup ( char * name ){ 
   int h = hash(name);
-  ScopeList nowSC = *scope;
+  ScopeList nowSC = now_scope();
   while (nowSC != NULL){
     BucketList l =  nowSC->bucket[h];
     while ((l != NULL) && (strcmp(name,l->name) != 0)) l = l->next;
@@ -87,9 +93,9 @@ int st_lookup ( ScopeList * scope, char * name ){
   return -1; 
 }
 
-BucketList bk_lookup ( ScopeList * scope, char * name ){ 
+BucketList bk_lookup ( char * name ){ 
   int h = hash(name);
-  ScopeList nowSC = *scope;
+  ScopeList nowSC = now_scope();
   while (nowSC != NULL){
     BucketList l =  nowSC->bucket[h];
     while ((l != NULL) && (strcmp(name,l->name) != 0)) l = l->next;
@@ -99,31 +105,51 @@ BucketList bk_lookup ( ScopeList * scope, char * name ){
   return NULL; 
 }
 
-ScopeList scope_create ( ScopeList * scope, char * name){
-  ScopeList nowSC = *scope;
+// 스코프 스택에 추가
+void scope_add(ScopeList scope){
+  stack[stack_idx] = scope;
+  stack_idx++;
+  loc[stack_idx] = 0;
+}
+
+// 스코프 스택에서 제거
+void scope_sub(){
+  if(stack_idx>0) {
+    stack[stack_idx-1] = NULL;
+    scope_idx--;
+  }
+}
+
+
+ScopeList now_scope(){
+  if(stack_idx>0){
+    return stack[stack_idx-1];
+  }
+  return 0;
+}
+
+int loc_add (){ 
+  return loc[scope_idx - 1]++;
+}
+
+
+ScopeList scope_create (char * name){
   
   /* 스코프 생성 */
   ScopeList newSC;
   newSC = (ScopeList)malloc(sizeof(struct ScopeListRec));
   newSC->name = name;
 
-  /* 지역 변수 및 함수 선언 */
-  newSC->memidx = 0;
+  /* depth는 현재 stack에 쌓여있는 스코프의 수가 된다.*/
+  newSC->depth = stack_idx;
+  /* 새로운 스코프의 부모는 현재 스택의 맨 위에 있는 스코프이다. */
+  newSC->parent = now_scope();
 
   /* 스코프 주소값 등록 */
-  scope_list_for_print[scope_index] = newSC;
-  scope_index++;
+  scopes[scope_idx] = newSC;
+  scope_idx++;
 
-  /* 부모 스코프가 없는 경우 (Global 스코프인 경우) */
-  if(scope == NULL){
-    newSC->depth = 0;
-    newSC->parent = NULL;
-  }
-  else{
-    ScopeList nowSC = (ScopeList) scope;
-    newSC->depth = nowSC->depth + 1;
-    nowSC->parent = nowSC;
-  }
+ 
   return newSC;
 }
 
@@ -137,9 +163,9 @@ void printSymTab(FILE * listing){
   fprintf(listing,"Name           Type           Location  Scope      Line Numbers\n");
   fprintf(listing,"-------------  -------------  --------  ---------- ------------\n");
 
-  for(sc_idx = 0; sc_idx < scope_index; sc_idx++){
+  for(sc_idx = 0; sc_idx < scope_idx; sc_idx++){
 
-    ScopeList nowSC = scope_list_for_print[sc_idx];
+    ScopeList nowSC = scopes[sc_idx];
     BucketList * l =  nowSC->bucket;  
 
     /* 해당 심볼 테이블 내의 모든 버킷 순회 */
@@ -194,9 +220,9 @@ void print_Function_Table (FILE * listing){
   fprintf(listing,"Function Name  Scope Name  Return Type  Parameter Name  Parameter Type\n");
   fprintf(listing,"-------------  ----------  -----------  --------------  --------------\n");
 
-  for (sc_idx = 0; sc_idx < scope_index; sc_idx++){ 
+  for (sc_idx = 0; sc_idx < scope_idx; sc_idx++){ 
   
-    ScopeList nowSC = scope_list_for_print[sc_idx];
+    ScopeList nowSC = scopes[sc_idx];
     BucketList * l =  nowSC->bucket;  
 
 
@@ -237,8 +263,8 @@ void print_Function_Table (FILE * listing){
 
               /* 파라미터 찾기 */
               int no_param = 1;
-              for(param_sc_idx = 0; param_sc_idx < scope_index; param_sc_idx++){
-                ScopeList paramSC = scope_list_for_print[param_sc_idx];
+              for(param_sc_idx = 0; param_sc_idx < scope_idx; param_sc_idx++){
+                ScopeList paramSC = scopes[param_sc_idx];
                 if (strcmp(paramSC->name, nowBK->name) != 0) continue;
                 BucketList * param_l =  paramSC->bucket;  
 
@@ -308,9 +334,9 @@ void print_Function_and_GlobalVariables(FILE * listing){
   fprintf(listing,"   ID Name      ID Type    Data Type \n");
   fprintf(listing,"-------------  ---------  -----------\n");
 
-  for(sc_idx = 0; sc_idx < scope_index; sc_idx++){
+  for(sc_idx = 0; sc_idx < scope_idx; sc_idx++){
 
-    ScopeList nowSC = scope_list_for_print[sc_idx];
+    ScopeList nowSC = scopes[sc_idx];
 
     /* globa만 확인 */
     if(strcmp(nowSC->name, "global") != 0) continue;
@@ -389,9 +415,9 @@ void print_FunctionParameter_and_LocalVariables (FILE * listing){
   fprintf(listing,"--------------  ------------  -------------  -----------\n");
 
 
-  for(sc_idx = 0; sc_idx < scope_index; sc_idx++){
+  for(sc_idx = 0; sc_idx < scope_idx; sc_idx++){
 
-    ScopeList nowSC = scope_list_for_print[sc_idx];
+    ScopeList nowSC = scopes[sc_idx];
 
     /* globa만 확인 */
     if(strcmp(nowSC->name, "global") != 0) continue;

@@ -45,10 +45,17 @@ typedef struct ScopeListRec {
  * loc = memory location is inserted only thse
  * first time, otherwise ignored
  */
-void st_insert( ScopeList * scope, char * name, TreeNode * node, int lineno, int loc );
-int st_lookup ( ScopeList * scope, char * name );
-BucketList bk_lookup ( ScopeList * scope, char * name );
-ScopeList scope_create ( ScopeList * scope, char * name);
+void st_insert( char * name, TreeNode * node, int lineno, int loc );
+int st_lookup ( char * name );
+BucketList bk_lookup ( char * name );
+
+/* 12.21 추가 */
+void scope_add(ScopeList scope);
+void scope_sub();
+ScopeList now_scope();
+int loc_add ();
+
+ScopeList scope_create (char * name);
 
 /* Procedure printSymTab prints a formatted 
  * listing of the symbol table contents 
