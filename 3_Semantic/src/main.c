@@ -83,8 +83,11 @@ main( int argc, char * argv[] )
     //if (TraceAnalyze && !Error){
     if (TraceAnalyze){
       printSymTab(listing);
+      fprintf(listing,"\n\n");
       print_Function_Table(listing);
+      fprintf(listing,"\n\n");
       print_Function_and_GlobalVariables(listing);
+      fprintf(listing,"\n\n");
       print_FunctionParameter_and_LocalVariables(listing);
     }
   }
