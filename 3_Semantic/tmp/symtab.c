@@ -236,6 +236,7 @@ void print_SymTab(FILE * listing)
   }
 }
 
+
 void print_FuncTab(FILE * listing)
 { int sc_idx, bk_idx, k, param_bk_idx;
   fprintf(listing,"< Function Table >\n");
@@ -248,14 +249,14 @@ void print_FuncTab(FILE * listing)
 
     for (bk_idx = 0; bk_idx < MAX_BUCKET; bk_idx++)
     { if(l[bk_idx] != NULL)
-      { BucketList bl = l[bk_idx];
-        TreeNode * node = bl->node;
+      { BucketList nowBK = l[bk_idx];
+        TreeNode * node = nowBK->node;
 
-        while(bl != NULL)
+        while(nowBK != NULL)
         { switch (node->nodekind)
           { case DeclK:
               if(node->kind.decl == FunK)  /* Function print */
-              { fprintf(listing,"%-15s",bl->name);
+              { fprintf(listing,"%-15s",nowBK->name);
                 fprintf(listing,"%-12s",nowSC->name);
                 switch (node->type)
                 { case Void:
@@ -271,7 +272,7 @@ void print_FuncTab(FILE * listing)
                 int noParam = TRUE;
                 for (k = 0; k < scope_idx; k++)
                 { ScopeList paramScope = scopes[k];
-                  if (strcmp(paramScope->name, bl->name) != 0)
+                  if (strcmp(paramScope->name, nowBK->name) != 0)
                     continue;
                   BucketList * paramhashTable = paramScope->bucket;                  //printf("c\n");
 
@@ -309,7 +310,7 @@ void print_FuncTab(FILE * listing)
                 }
                 if (noParam)
                 { fprintf(listing,"%-16s","");
-                  if (strcmp(bl->name, "output") != 0)
+                  if (strcmp(nowBK->name, "output") != 0)
                     fprintf(listing,"%-14s","Void");
                   else 
                     fprintf(listing,"\n%-56s%-14s","","Integer");
@@ -321,12 +322,13 @@ void print_FuncTab(FILE * listing)
             default:
               break;
           }          
-          bl = bl->next;
+          nowBK = nowBK->next;
         }
       }
     }
   }
 }
+
 
 
 void print_Func_globVar(FILE * listing)
