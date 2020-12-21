@@ -12,12 +12,22 @@
 #include <stdlib.h>
 #include <string.h>
 #include "symtab.h"
+
+/* 12.12 TreeNode 자료형을 사용하기 위해 추가 */
 #include "globals.h"
 
-/* SHIFT is the power of two used as multiplier
-   in hash function  */
+
 #define SHIFT 4
-#define MAX_SCOPES 1000
+
+/* 스코프 최대 갯수 */
+ScopeList scopes[MAX_SC];
+int scope_idx = 0;
+
+ScopeList stack[MAX_SC];
+int stack_idx = 0;
+
+int loc[MAX_SC];
+
 
 /* the hash function */
 static int hash ( char * key )
@@ -30,15 +40,7 @@ static int hash ( char * key )
   return temp;
 }
 
-ScopeList scopes[MAX_SCOPES], scopeStack[MAX_SCOPES];
-int cntScope = 0, cntScopeStack = 0, location[MAX_SCOPES];
 
-/* Procedure st_insert inserts line numbers and
- * memory locations into the symbol table
- * loc = memory location is inserted only the
- * first time, otherwise ignored
- */
-//void st_insert( char * scope, char * name, ExpType type, int lineno, int loc )
 void st_insert( char * name, int lineno, int loc, TreeNode * treeNode )
 { int h = hash(name);
   ScopeList nowScope = sc_top();
@@ -58,15 +60,7 @@ void st_insert( char * name, int lineno, int loc, TreeNode * treeNode )
     l->next = nowScope->bucket[h];
     nowScope->bucket[h] = l; 
   }
-  else /* found in table, so just add line number */
-  { 
-    // LineList t = l->lines;
-    // while (t->next != NULL) t = t->next;
-    // t->next = (LineList) malloc(sizeof(struct LineListRec));
-    // t->next->lineno = lineno;
-    // t->next->next = NULL;
-  }
-} /* st_insert */
+} 
 
 /* Function st_lookup returns the memory 
  * location of a variable or -1 if not found
@@ -120,31 +114,31 @@ ScopeList sc_create ( char * funcName )
 { ScopeList newScope;
   newScope = (ScopeList) malloc(sizeof(struct ScopeListRec));
   newScope->name = funcName;
-  newScope->depth = cntScopeStack;
+  newScope->depth = stack_idx;
   newScope->parent = sc_top();
-  scopes[cntScope++] = newScope;
+  scopes[scope_idx++] = newScope;
 
   return newScope;
 }
 
 ScopeList sc_top( void )
-{ if(!cntScopeStack)
+{ if(!stack_idx)
     return NULL;
-  return scopeStack[cntScopeStack - 1];
+  return stack[stack_idx - 1];
 }
 
 void sc_pop ( void )
-{ if(cntScopeStack)
-    cntScopeStack--;
+{ if(stack_idx)
+    stack_idx--;
 }
 
 void sc_push ( ScopeList scope )
-{ scopeStack[cntScopeStack] = scope;
-  location[cntScopeStack++] = 0;
+{ stack[stack_idx] = scope;
+  loc[stack_idx++] = 0;
 }
 
 int addLocation ( void )
-{ return location[cntScopeStack - 1]++;
+{ return loc[stack_idx - 1]++;
 }
 
 /* Procedure printSymTab prints a formatted 
@@ -168,7 +162,7 @@ void print_SymTab(FILE * listing)
   fprintf(listing,"Variable Name  Variable Type  Scope Name  Location  Line Numbers\n");
   fprintf(listing,"-------------  -------------  ----------  --------  ------------\n");
 
-  for (i = 0; i < cntScope; i++)
+  for (i = 0; i < scope_idx; i++)
   { ScopeList nowScope = scopes[i];
     BucketList * hashTable = nowScope->bucket;
 
@@ -243,7 +237,7 @@ void print_FuncTab(FILE * listing)
   fprintf(listing,"Function Name  Scope Name  Return Type  Parameter Name  Parameter Type\n");
   fprintf(listing,"-------------  ----------  -----------  --------------  --------------\n");
 
-  for (i = 0; i < cntScope; i++)
+  for (i = 0; i < scope_idx; i++)
   { ScopeList nowScope = scopes[i];
     BucketList * hashTable = nowScope->bucket;
 
@@ -270,7 +264,7 @@ void print_FuncTab(FILE * listing)
                 }
 
                 int noParam = TRUE;
-                for (k = 0; k < cntScope; k++)
+                for (k = 0; k < scope_idx; k++)
                 { ScopeList paramScope = scopes[k];
                   if (strcmp(paramScope->name, bl->name) != 0)
                     continue;
@@ -335,7 +329,7 @@ void print_Func_globVar(FILE * listing)
   fprintf(listing,"   ID Name      ID Type    Data Type \n");
   fprintf(listing,"-------------  ---------  -----------\n");
 
-  for (i = 0; i < cntScope; i++)
+  for (i = 0; i < scope_idx; i++)
   { ScopeList nowScope = scopes[i];
     if (strcmp(nowScope->name, "global") != 0)
       continue;
@@ -405,7 +399,7 @@ void print_FuncP_N_LoclVar(FILE * listing)
   fprintf(listing,"  Scope Name    Nested Level     ID Name      Data Type \n");
   fprintf(listing,"--------------  ------------  -------------  -----------\n");
 
-  for (i = 0; i < cntScope; i++)
+  for (i = 0; i < scope_idx; i++)
   { ScopeList nowScope = scopes[i];
     if (strcmp(nowScope->name, "global") == 0)
       continue;
