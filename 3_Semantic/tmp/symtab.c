@@ -151,90 +151,60 @@ int loc_add ( void )
  * to the listing file
  */
 
-void printSymTab(FILE * listing)
-{ print_SymTab(listing);
-  fprintf(listing,"\n");
-  print_Function_Table(listing);
-  fprintf(listing,"\n");
-  print_Function_and_GlobalVariables(listing);
-  fprintf(listing,"\n");
-  print_FunctionParameter_and_LocalVariables(listing);
-} /* printSymTab */
+void printSymTab(FILE * listing){ 
+  int sc_idx,bk_idx;
 
-void print_SymTab(FILE * listing)
-{ int i, j;
-  fprintf(listing,"< Symbol Table >\n");
-  fprintf(listing,"Variable Name  Variable Type  Scope Name  Location  Line Numbers\n");
-  fprintf(listing,"-------------  -------------  ----------  --------  ------------\n");
+  fprintf(listing,"Name           Type           Location  Scope      Line Numbers\n");
+  fprintf(listing,"-------------  -------------  --------  ---------- ------------\n");
 
-  for (i = 0; i < scope_idx; i++)
-  { ScopeList nowScope = scopes[i];
-    BucketList * hashTable = nowScope->bucket;
+  for(sc_idx = 0; sc_idx < scope_idx; sc_idx++){
 
-    for (j = 0; j < MAX_BUCKET; j++)
-    { if(hashTable[j] != NULL)
-      { BucketList bl = hashTable[j];
-        TreeNode * node = bl->node;
+    ScopeList nowSC = scopes[sc_idx];
+    BucketList * l =  nowSC->bucket;  
 
-        while(bl != NULL)
-        { LineList ll = bl->lines;
-          fprintf(listing,"%-15s",bl->name);
+    /* 해당 심볼 테이블 내의 모든 버킷 순회 */
+    for(bk_idx =0; bk_idx < MAX_BUCKET; bk_idx++){ 
+      
+      if (l[bk_idx] != NULL){ 
+    
+        BucketList nowBK = l[bk_idx];
 
-          switch (node->nodekind)
-          { case DeclK:
-              switch (node->kind.decl)
-              { case FunK:
-                  fprintf(listing,"%-15s","Function");
-                  break;
-                case VarK:
-                  switch (node->type)
-                  { case Void:
-                      fprintf(listing,"%-15s","Void");
-                      break;
-                    case Integer:
-                      fprintf(listing,"%-15s","Integer");
-                      break;
-                    default:
-                      break;
-                  }
-                  break;
-                case ArrVarK:
-                  fprintf(listing,"%-15s","IntegerArray");
-                  break;
-                default:
-                  break;
-              }
+        /* 같은 버켓에 존재하는 symbol 순회 */
+        while (nowBK != NULL){
+           /* 심볼 이름 출력 */
+          fprintf(listing,"%-15s",nowBK->name);
+  
+          TreeNode * node = nowBK->node;
+          /* 타입 출력 */
+          switch (node->type)
+          {
+            case Void:
+              fprintf(listing,"%-15s","Void");
               break;
-            case ParamK:
-              switch (node->kind.param)
-              { case ArrParamK:
-                  fprintf(listing,"%-15s","IntegerArray");
-                  break;
-                case SingleParamK:
-                  fprintf(listing,"%-15s","Integer");
-                  break;
-                default:
-                  break;
-              }
+            case Integer:
+              fprintf(listing,"%-15s","Integer");
               break;
             default:
               break;
           }
 
-          fprintf(listing,"%-12s",nowScope->name);
-          fprintf(listing,"%-10d",bl->memloc);
-          while(ll != NULL)
-          { fprintf(listing,"%4d",ll->lineno);
-            ll = ll->next;
+          /* 나머지 출력 */
+          fprintf(listing,"%-10d",nowBK->memloc);
+          fprintf(listing,"%-12s",nowSC->name);
+          LineList linelist = nowBK->lines;
+          while(linelist != NULL){ 
+            fprintf(listing,"%4d",linelist->lineno);
+            linelist = linelist->next;
           }
           fprintf(listing,"\n");
-          
-          bl = bl->next;
+
+          nowBK = nowBK->next;
         }
       }
     }
   }
-}
+} /* printSymTab */
+
 
 
 void print_Function_Table (FILE * listing){ 
@@ -350,8 +320,6 @@ void print_Function_Table (FILE * listing){
 
 
 
-
-
 void print_Function_and_GlobalVariables(FILE * listing){ 
   
   int sc_idx,bk_idx;
@@ -430,6 +398,7 @@ void print_Function_and_GlobalVariables(FILE * listing){
     }
   }
 }
+
 
 void print_FunctionParameter_and_LocalVariables (FILE * listing){ 
   
@@ -523,3 +492,4 @@ void print_FunctionParameter_and_LocalVariables (FILE * listing){
     if (!no_param) fprintf(listing,"\n");
   }
 }
+
