@@ -42,7 +42,7 @@ int EchoSource = FALSE;
 int TraceScan = FALSE;
 int TraceParse = FALSE;
 /* 디버깅시에만 TRUE로 제출시에는 FALSE */ 
-int TraceAnalyze = FALSE;
+int TraceAnalyze = TRUE;
 int TraceCode = FALSE;
 
 int Error = FALSE;

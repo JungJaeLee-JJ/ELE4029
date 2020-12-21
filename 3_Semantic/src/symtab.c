@@ -79,13 +79,28 @@ int st_lookup ( char * name )
 }
 
 void line_add( char * name, int lineno )
-{ BucketList bl = bk_lookup(name);
-  LineList ll = bl->lines;
-  while(ll->next != NULL)
-    ll = ll->next;
-  ll->next = (LineList) malloc(sizeof(struct LineListRec));
-  ll->next->lineno = lineno;
-  ll->next->next = NULL;
+{ 
+  int h = hash(name);
+  ScopeList nowScope = now_scope();
+  while(nowScope != NULL){ 
+    
+    BucketList l = nowScope->bucket[h];
+
+    while((l != NULL) && (strcmp(name,l->name) != 0) ) l = l->next;
+    
+    if(l != NULL){
+       LineList ll = l->lines;
+      /* 마지막 line 찾기 */
+      while(ll->next != NULL) ll = ll->next;
+
+      /* 마지막 line에서 line 1개를 더 추가*/
+      ll->next = (LineList) malloc(sizeof(struct LineListRec));
+      ll->next->lineno = lineno;
+      ll->next->next = NULL;
+
+    }
+    nowScope = nowScope->parent;
+  }
 }
 
 int st_lookup_top ( char * name )
