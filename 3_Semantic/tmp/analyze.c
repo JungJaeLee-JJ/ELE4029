@@ -276,28 +276,36 @@ static void checkNode(TreeNode * t)
 { switch (t->nodekind)
   { case StmtK:
       switch (t->kind.stmt)
-      { case CompK:
+      { 
+        case CompK:
           scope_sub();
           break;
+
+        /* if문 에러 */
         case IfK:
         case IfEK:
-          if (t->child[0] == NULL)
-            typeError(t,"expected expression");
-          else if (t->child[0]->type == Void)
-            typeError(t->child[0],"invalid if condition type");
+          if (t->child[0] == NULL) typeError(t,"expected expression");
+          else if (t->child[0]->type == Void) typeError(t->child[0],"invalid if condition type");
           break;
+
+        /* while문 에러 */
         case WhileK:
-          if (t->child[0] == NULL)
-            typeError(t,"expected expression");
-          else if (t->child[0]->type == Void)
-            typeError(t->child[0],"invalid loop condition type");
+          if (t->child[0] == NULL) typeError(t,"expected expression");
+          else if (t->child[0]->type == Void) typeError(t->child[0],"invalid loop condition type");
           break;
+
         case ReturnK:
-        { TreeNode * retFunc = get_bucket(function_name)->node;
-          if ((retFunc->type == Void && t->child[0] != NULL) ||
-              (retFunc->type == Integer && 
-              (t->child[0] == NULL || t->child[0]->type == Void || t->child[0]->type == ArrayInteger)))
-            typeError(t,"invalid return type");
+        { 
+          TreeNode * ret = bk_lookup(function_name)->node;
+          /* void 인데, return 파라미터가 존재하는 경우 */
+          if(ret->type == Void && t->child[0] != NULL)  typeError(t,"invalid return type");
+          
+          /* int 인데, return 파라미터가 존재하지 않거나, 타입이 다른 경우 */
+          else if ( ret->type == Integer &&  (t->child[0] == NULL || t->child[0]->type == Void || t->child[0]->type == ArrayInteger)) typeError(t,"invalid return type");
+          
+          /* int array 인데, return 파라미터가 존재하지 않거나, 타입이 다른 경우 */
+          else if ( ret->type == ArrayInteger &&  (t->child[0] == NULL || t->child[0]->type == Void || t->child[0]->type == Integer)) typeError(t,"invalid return type");
+
           break;
         }
         default:
@@ -306,117 +314,114 @@ static void checkNode(TreeNode * t)
       break;
     case ExpK:
       switch (t->kind.exp)
-      { case AssignK:
-          if (t->child[0]->type == Void || t->child[1]->type == Void)
-            typeError(t->child[0],"invalid variable type");
-          else if (t->child[0]->type == ArrayInteger && t->child[0]->child[0] == NULL)
-            typeError(t->child[0],"invalid variable type");
-          else if (t->child[1]->type == ArrayInteger && t->child[1]->child[0] == NULL)
-            typeError(t->child[0],"invalid variable type");
-          else 
-            t->type = t->child[0]->type;
+      { 
+        case AssignK:
+          if (t->child[0]->type == Void || t->child[1]->type == Void) typeError(t->child[0],"invalid variable type");
+          else if (t->child[0]->type == ArrayInteger && t->child[0]->child[0] == NULL) typeError(t->child[0],"invalid variable type");
+          else if (t->child[1]->type == ArrayInteger && t->child[1]->child[0] == NULL) typeError(t->child[0],"invalid variable type");
+          else t->type = t->child[0]->type;
           break;
+
         case OpK:
-        { ExpType lType, rType;
+        {
+          ExpType lType, rType;
           TokenType op;
 
           lType = t->child[0]->type;
           rType = t->child[1]->type;
           op = t->attr.op;
 
-          if(lType == ArrayInteger && t->child[0]->child[0] != NULL)
-            lType = Integer;
-          if(rType == ArrayInteger && t->child[1]->child[0] != NULL)
-            rType = Integer;
+          
+          if(lType == ArrayInteger && t->child[0]->child[0] != NULL) lType = Integer;
+          if(rType == ArrayInteger && t->child[1]->child[0] != NULL) rType = Integer;
+          
 
-          if (lType == Void || rType == Void)
-            typeError(t,"void variable cannot be operand");
-          else if (lType != rType)
-            typeError(t,"operands have different type");
-          else
-            t->type = Integer;
+          if (lType == Void || rType == Void) typeError(t,"void variable cannot be operand");
+          else if (lType != rType) typeError(t,"operands have different type");
+          else t->type = Integer;
+          
           break;
         }
+        
         case ConstK:
           t->type = Integer;
           break;
+
         case IdK:
         case ArrIdK:
-        { BucketList l = get_bucket(t->attr.name);
-          if (l == NULL)
-            break;
+        {  
+          BucketList l = bk_lookup(t->attr.name);
+          if (l == NULL) break;
 
           TreeNode * symbolNode = NULL;
           symbolNode = l->node;
 
-          if (t->kind.exp == ArrIdK)
-          { if ((symbolNode->nodekind == DeclK && symbolNode->kind.decl != ArrVarK)
-                || (symbolNode->nodekind == ParamK && symbolNode->kind.param != ArrParamK))
-              typeError(t, "invalid expression");
-            else
-              t->type = symbolNode->type;
+          if (t->kind.exp == ArrIdK){ 
+            if (symbolNode->nodekind == DeclK && symbolNode->kind.decl != ArrVarK) typeError(t, "invalid expression");
+            else if (symbolNode->nodekind == ParamK && symbolNode->kind.param != ArrParamK)  typeError(t, "invalid expression");
+            else t->type = symbolNode->type;
           }
-          else
-            t->type = symbolNode->type;
+          else t->type = symbolNode->type;
           break;
         }
         case CallK:
-        { BucketList l = get_bucket(t->attr.name);
+        {
+          BucketList l = bk_lookup(t->attr.name);
           TreeNode * funcNode = NULL;
           TreeNode * arg;
           TreeNode * param;
 
-          if (l == NULL)
-            break;
+          if (l == NULL) break;
           funcNode = l->node;
           arg = t->child[0];
           param = funcNode->child[1];
 
-          if (funcNode->kind.decl != FunK)
-          { typeError(t, "invalid expression");
+          if (funcNode->kind.decl != FunK){ 
+            typeError(t, "invalid expression");
             break;
           }
 
-          while (arg != NULL)
-          { if (param == NULL || arg->type == Void)
-            { typeError(arg, "invalid function call");
-              break;
-            }
-            ExpType pType = param->type;
-            ExpType aType = arg->type;            
-            if(aType == ArrayInteger && arg->child[0] != NULL)
-              aType = Integer;
+          while (arg != NULL){ 
 
-            if (pType != aType)
-            { typeError(arg, "invalid function call");
+            if (param == NULL || arg->type == Void){ 
+              typeError(arg, "invalid function call");
               break;
             }
-            else
-            { arg = arg->sibling;
+
+            ExpType pType = param->type;
+            ExpType aType = arg->type;   
+
+            /*
+            if(aType == ArrayInteger && arg->child[0] != NULL) aType = Integer;
+            */
+
+            if (pType != aType) { 
+              typeError(arg, "invalid function call");
+              break;
+            }
+            else { 
+              arg = arg->sibling;
               param = param->sibling;
             }
           }
-          if (arg == NULL && param != NULL && param->child[0]->attr.type != VOID){
-            typeError(t->child[0],"invalid function call");
-          }
-          
+          if (arg == NULL && param != NULL && param->child[0]->attr.type != VOID) typeError(t->child[0],"invalid function call");
+
           t->type = funcNode->type;
           break;
         }
         default:
           break;
-      }
+       }
       break;
+
     case DeclK:
       switch (t->kind.decl)
       { case VarK:
         case ArrVarK:
-          if (t->child[0]->attr.type == VOID)
-          { char * name;            
-            if (t->kind.decl == VarK)
-              name = t->attr.name;
-            else
-              name = t->attr.arr.name;
+          if (t->child[0]->attr.type == VOID){ 
+            char * name;            
+            if (t->kind.decl == VarK) name = t->attr.name;
+            else name = t->attr.arr.name;
             voidVarError(t, name);
             break;
           }
@@ -427,7 +432,6 @@ static void checkNode(TreeNode * t)
       break;
     default:
       break;
-
   }
 }
 
@@ -458,13 +462,11 @@ static void beforeCheckNode(TreeNode * t)
   }
 }
 
-
-
 /* Procedure typeCheck performs type checking 
  * by a postorder syntax tree traversal
  */
-void typeCheck(TreeNode * syntaxTree)
-{ scope_add(globalSC);
+void typeCheck(TreeNode * syntaxTree){ 
+  scope_add(globalSC);
   traverse(syntaxTree,beforeCheckNode,checkNode);
   scope_sub();
 }

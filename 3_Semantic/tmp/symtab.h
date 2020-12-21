@@ -54,7 +54,7 @@ int st_lookup (char * name );
 void st_add_lineno( char * name, int lineno );
 int st_lookup_top ( char * name );
 
-BucketList get_bucket ( char * name );
+BucketList bk_lookup ( char * name );
 
 /* Stack for static scope */
 ScopeList scope_create ( char * function_name );

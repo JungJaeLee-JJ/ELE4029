@@ -71,13 +71,13 @@ void st_insert( char * name, TreeNode * node, int lineno, int loc ){
  * location of a variable or -1 if not found
  */
 int st_lookup ( char * name )
-{ BucketList l = get_bucket(name);
+{ BucketList l = bk_lookup(name);
   if(l != NULL) return l->memloc;
   return -1;
 }
 
 void st_add_lineno( char * name, int lineno )
-{ BucketList bl = get_bucket(name);
+{ BucketList bl = bk_lookup(name);
   LineList ll = bl->lines;
   while(ll->next != NULL)
     ll = ll->next;
@@ -100,7 +100,7 @@ int st_lookup_top ( char * name )
   return -1;
 }
 
-BucketList get_bucket ( char * name )
+BucketList bk_lookup ( char * name )
 { int h = hash(name);
   ScopeList nowScope = now_scope();
   while(nowScope != NULL)
