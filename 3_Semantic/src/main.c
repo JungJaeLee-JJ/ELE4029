@@ -6,6 +6,7 @@
 /****************************************************/
 
 #include "globals.h"
+#include "symtab.h"
 
 /* set NO_PARSE to TRUE to get a scanner-only compiler */
 #define NO_PARSE FALSE
