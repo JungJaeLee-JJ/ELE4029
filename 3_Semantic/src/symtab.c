@@ -348,7 +348,7 @@ void print_Function_Table (FILE * listing){
               if(no_param){
                 fprintf(listing,"%-15s","");
                 if (strcmp(nowBK->name, "output") != 0) fprintf(listing,"%-14s","Void");
-                else  fprintf(listing,"\n%-60s","","Integer");
+                else  fprintf(listing,"\n%-75s","","Integer");
               }
 
               fprintf(listing,"\n");
