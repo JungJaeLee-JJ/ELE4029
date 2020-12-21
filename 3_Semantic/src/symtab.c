@@ -236,10 +236,10 @@ void printSymTab(FILE * listing){
 
           /* 나머지 출력 */
           fprintf(listing,"%-15d",nowBK->memloc);
-          fprintf(listing,"%-13s",nowSC->name);
+          fprintf(listing,"%-15s",nowSC->name);
           LineList linelist = nowBK->lines;
           while(linelist != NULL){ 
-            fprintf(listing,"%2d",linelist->lineno);
+            fprintf(listing,"%4d",linelist->lineno);
             linelist = linelist->next;
           }
           fprintf(listing,"\n");
@@ -257,8 +257,8 @@ void print_Function_Table (FILE * listing){
   int sc_idx,bk_idx,param_sc_idx,param_bk_idx;
 
   fprintf(listing,"< Function Table >\n");
-  fprintf(listing,"Function Name  Scope Name  Return Type  Parameter Name  Parameter Type\n");
-  fprintf(listing,"-------------  ----------  -----------  --------------  --------------\n");
+  fprintf(listing,"Function Name  Scope Name     Return Type    Parameter Name Parameter Type\n");
+  fprintf(listing,"-------------  -------------  -------------  -------------  ------------- \n");
 
   for (sc_idx = 0; sc_idx < scope_idx; sc_idx++){ 
   
@@ -286,16 +286,16 @@ void print_Function_Table (FILE * listing){
               if (node->kind.decl == FunK) {
 
                 fprintf(listing,"%-15s",nowBK->name);
-                fprintf(listing,"%-12s",nowSC->name);
+                fprintf(listing,"%-15s",nowSC->name);
 
                 /* return type */
                 switch (node->type)
                 {
                   case Void:
-                    fprintf(listing,"%-13s","Void");
+                    fprintf(listing,"%-15s","Void");
                     break;
                   case Integer:
-                    fprintf(listing,"%-13s","Integer");
+                    fprintf(listing,"%-15s","Integer");
                     break;
                   default:
                     break;
@@ -323,14 +323,14 @@ void print_Function_Table (FILE * listing){
                             no_param = 0;
                             fprintf(listing,"\n");
                             fprintf(listing,"%-40s","");
-                            fprintf(listing,"%-16s",paramBK->name);
+                            fprintf(listing,"%-15s",paramBK->name);
                             switch (param_node->type)
                             {
                               case Integer:
-                                fprintf(listing,"%-14s","Integer");
+                                fprintf(listing,"%-15s","Integer");
                                 break;
                               case ArrayInteger:
-                                fprintf(listing,"%-14s","ArrayInteger");
+                                fprintf(listing,"%-15s","ArrayInteger");
                                 break;
                               default:
                                 break;
@@ -346,9 +346,9 @@ void print_Function_Table (FILE * listing){
                 break;
               }
               if(no_param){
-                fprintf(listing,"%-16s","");
+                fprintf(listing,"%-15s","");
                 if (strcmp(nowBK->name, "output") != 0) fprintf(listing,"%-14s","Void");
-                else  fprintf(listing,"\n%-56s%-14s","","Integer");
+                else  fprintf(listing,"\n%-60s","","Integer");
               }
 
               fprintf(listing,"\n");
