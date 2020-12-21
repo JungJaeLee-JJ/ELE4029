@@ -11,7 +11,9 @@
 /* Function buildSymtab constructs the symbol 
  * table by preorder traversal of the syntax tree
  */
-void buildSymtab(TreeNode *);
+
+/* 디버깅을 위해 listing 추가 */
+void buildSymtab(TreeNode *, FILE * listing);
 
 /* Procedure typeCheck performs type checking 
  * by a postorder syntax tree traversal

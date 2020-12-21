@@ -13,13 +13,11 @@
 /* 12.12 */
 #include "util.h"
 
-ScopeList globalSC = NULL;
+static ScopeList globalSC = NULL;
 
 /* 현재 scope 갯수 */
-int scope_index = 0;
-char * function_name;
-int vari_idx =0;
-int isInScope = 0;
+static char * function_name;
+static int isInScope = 0;
 
 
 /* counter for variable memory locations */
@@ -203,10 +201,16 @@ static void backToParent(TreeNode * t){
 /* Function buildSymtab constructs the symbol 
  * table by preorder traversal of the syntax tree
  */
-void buildSymtab(TreeNode * syntaxTree){ 
+void buildSymtab(TreeNode * syntaxTree, FILE * listing){ 
 
   /* 12.12 global scope 생성  */
+
+  fprintf(listing,"start\n");
+
   globalSC = scope_create("global");
+
+  fprintf(listing,"global done\n");
+
 
   TreeNode * function;
   TreeNode * type;
@@ -232,6 +236,8 @@ void buildSymtab(TreeNode * syntaxTree){
 
   st_insert("input",function,0,loc_add());
 
+  fprintf(listing,"input done\n");
+
   /* output() */
   function = newDeclNode(FunK);
   type = newDeclNode(TypeK);
@@ -256,6 +262,8 @@ void buildSymtab(TreeNode * syntaxTree){
   function->child[2] = comp; 
 
   st_insert("output",function,0,loc_add());
+  
+  fprintf(listing,"output done\n");
 
   traverse(syntaxTree,insertNode,backToParent);
 }
