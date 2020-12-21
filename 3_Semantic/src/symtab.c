@@ -41,7 +41,7 @@ static int hash ( char * key )
 
 
 void st_insert( char * name, TreeNode * node, int lineno, int loc ){ 
-  printf("insert\n");
+  printf("insert %s\n",name);
   int h = hash(name);
   ScopeList nowSC = now_scope();
   BucketList l =  nowSC->bucket[h];
