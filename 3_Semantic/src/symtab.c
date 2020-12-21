@@ -72,22 +72,31 @@ void st_insert( char * name, TreeNode * node, int lineno, int loc ){
 /* Function st_lookup returns the memory 
  * location of a variable or -1 if not found
  */
-int st_lookup ( char * name )
-{ BucketList l = bk_lookup(name);
-  if(l != NULL) return l->memloc;
+int st_lookup ( char * name ){ 
+  int h = hash(name);
+  ScopeList nowSC = now_scope();
+  while(nowSC != NULL)
+  { BucketList l = nowSC->bucket[h];
+    while((l != NULL) && (strcmp(name,l->name) != 0) )
+      l = l->next;
+    if(l != NULL){
+      return l->memloc;
+    }
+    nowSC = nowSC->parent;
+  }
   return -1;
 }
 
 void line_add( char * name, int lineno )
 { 
   int h = hash(name);
-  ScopeList nowScope = now_scope();
-  while(nowScope != NULL){ 
+  ScopeList nowSC = now_scope();
+  while(nowSC != NULL){ 
     
-    BucketList l = nowScope->bucket[h];
+    BucketList l = nowSC->bucket[h];
 
     while((l != NULL) && (strcmp(name,l->name) != 0) ) l = l->next;
-    
+
     if(l != NULL){
        LineList ll = l->lines;
       /* 마지막 line 찾기 */
@@ -99,14 +108,14 @@ void line_add( char * name, int lineno )
       ll->next->next = NULL;
 
     }
-    nowScope = nowScope->parent;
+    nowSC = nowSC->parent;
   }
 }
 
 int st_lookup_top ( char * name )
 { int h = hash(name);
-  ScopeList nowScope = now_scope();
-   BucketList l = nowScope->bucket[h];
+  ScopeList nowSC = now_scope();
+   BucketList l = nowSC->bucket[h];
     while((l != NULL) && (strcmp(name,l->name) != 0))
       l = l->next;
     if(l != NULL)
@@ -116,14 +125,14 @@ int st_lookup_top ( char * name )
 
 BucketList bk_lookup ( char * name )
 { int h = hash(name);
-  ScopeList nowScope = now_scope();
-  while(nowScope != NULL)
-  { BucketList l = nowScope->bucket[h];
+  ScopeList nowSC = now_scope();
+  while(nowSC != NULL)
+  { BucketList l = nowSC->bucket[h];
     while((l != NULL) && (strcmp(name,l->name) != 0) )
       l = l->next;
     if(l != NULL)
       return l;
-    nowScope = nowScope->parent;
+    nowSC = nowSC->parent;
   }
   return NULL;
 }
