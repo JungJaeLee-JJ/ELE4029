@@ -9,13 +9,19 @@
 #include "globals.h"
 #include "symtab.h"
 #include "analyze.h"
+
+/* 12.12 */
 #include "util.h"
+
+static ScopeList globalSC = NULL;
+
+/* 현재 scope 갯수 */
+static char * function_name;
+static int isInScope = 0;
+
 
 /* counter for variable memory locations */
 static int location = 0;
-static ScopeList globalSC = NULL;
-static char * funcName;
-static int inScopeBefore = FALSE;
 
 /* Procedure traverse is a generic recursive 
  * syntax tree traversal routine:
@@ -89,10 +95,10 @@ static void insertNode( TreeNode * t )
   { case StmtK:
       switch (t->kind.stmt)
       { case CompK:
-          if (inScopeBefore)
-            inScopeBefore = FALSE;
+          if (isInScope)
+            isInScope = FALSE;
           else
-          { ScopeList scope = scope_create(funcName);
+          { ScopeList scope = scope_create(function_name);
             scope_add(scope);
             location++;
           }
@@ -122,7 +128,7 @@ static void insertNode( TreeNode * t )
     case DeclK:
       switch (t->kind.decl)
       { case FunK:
-          funcName = t->attr.name;
+          function_name = t->attr.name;
           if (st_lookup_top(t->attr.name) >= 0)
           { redefinedError(t);
             break;
@@ -131,9 +137,9 @@ static void insertNode( TreeNode * t )
           { funcDeclNotGlobal(t);
             break;
           }
-          st_insert(funcName, t, t->lineno, loc_add());
-          scope_add(scope_create(funcName));
-          inScopeBefore = TRUE;
+          st_insert(function_name, t, t->lineno, loc_add());
+          scope_add(scope_create(function_name));
+          isInScope = TRUE;
 
           switch (t->child[0]->attr.type)
           { case INT:
@@ -265,7 +271,7 @@ static void beforeCheckNode(TreeNode * t)
   { case DeclK:
       switch (t->kind.decl)
       { case FunK:
-          funcName = t->attr.name;
+          function_name = t->attr.name;
           break;
         default:
           break;
@@ -309,7 +315,7 @@ static void checkNode(TreeNode * t)
             typeError(t->child[0],"invalid loop condition type");
           break;
         case ReturnK:
-        { TreeNode * retFunc = get_bucket(funcName)->node;
+        { TreeNode * retFunc = get_bucket(function_name)->node;
           if ((retFunc->type == Void && t->child[0] != NULL) ||
               (retFunc->type == Integer && 
               (t->child[0] == NULL || t->child[0]->type == Void || t->child[0]->type == ArrayInteger)))

@@ -115,10 +115,10 @@ BucketList get_bucket ( char * name )
 }
 
 /* Stack for static scope */
-ScopeList scope_create ( char * funcName )
+ScopeList scope_create ( char * function_name )
 { ScopeList newScope;
   newScope = (ScopeList) malloc(sizeof(struct ScopeListRec));
-  newScope->name = funcName;
+  newScope->name = function_name;
   newScope->depth = stack_idx;
   newScope->parent = sc_top();
   scopes[scope_idx++] = newScope;
@@ -422,7 +422,7 @@ void print_FuncP_N_LoclVar(FILE * listing)
     if (strcmp(nowScope->name, "global") == 0)
       continue;
     BucketList * hashTable = nowScope->bucket;
-    //fprintf(listing,"%s\n",nowScope->funcName); 
+    //fprintf(listing,"%s\n",nowScope->function_name); 
 
     int noParamVar = TRUE;
     for (j = 0; j < MAX_BUCKET; j++)
