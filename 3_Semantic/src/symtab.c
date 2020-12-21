@@ -200,8 +200,8 @@ int loc_add ( void ){
 void printSymTab(FILE * listing){ 
   int sc_idx,bk_idx;
 
-  fprintf(listing,"Name           Type           Location  Scope      Line Numbers\n");
-  fprintf(listing,"-------------  -------------  --------  ---------- ------------\n");
+  fprintf(listing,"Name           Type           Location       Scope          Line Numbers\n");
+  fprintf(listing,"-------------  -------------  -------------  -------------  ------------- \n");
 
   for(sc_idx = 0; sc_idx < scope_idx; sc_idx++){
 
@@ -235,11 +235,11 @@ void printSymTab(FILE * listing){
           }
 
           /* 나머지 출력 */
-          fprintf(listing,"%-10d",nowBK->memloc);
-          fprintf(listing,"%-12s",nowSC->name);
+          fprintf(listing,"%-15d",nowBK->memloc);
+          fprintf(listing,"%-15s",nowSC->name);
           LineList linelist = nowBK->lines;
           while(linelist != NULL){ 
-            fprintf(listing,"%4d",linelist->lineno);
+            fprintf(listing,"%15d",linelist->lineno);
             linelist = linelist->next;
           }
           fprintf(listing,"\n");
