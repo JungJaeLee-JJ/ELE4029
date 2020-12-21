@@ -134,10 +134,7 @@ ScopeList sc_top( void )
 
 // 스코프 스택에서 제거
 void scope_sub(){
-  if(stack_idx>0) {
-    stack[stack_idx-1] = NULL;
-    scope_idx--;
-  }
+  if(stack_idx>0) scope_idx--;
 }
 
 
