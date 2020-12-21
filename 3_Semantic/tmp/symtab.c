@@ -154,7 +154,7 @@ int loc_add ( void )
 void printSymTab(FILE * listing)
 { print_SymTab(listing);
   fprintf(listing,"\n");
-  print_FuncTab(listing);
+  print_Function_Table(listing);
   fprintf(listing,"\n");
   print_Func_globVar(listing);
   fprintf(listing,"\n");
