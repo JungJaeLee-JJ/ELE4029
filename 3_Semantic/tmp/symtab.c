@@ -147,7 +147,7 @@ void scope_add(ScopeList scope){
 // 스코프 스택에서 제거
 void scope_sub(){
   if(stack_idx>0) {
-    scope_idx--;
+    stack_idx--;
   }
 }
 
