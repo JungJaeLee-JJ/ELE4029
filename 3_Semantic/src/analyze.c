@@ -337,7 +337,7 @@ static void checkNode(TreeNode * t)
           
 
           if (lType == Void || rType == Void) typeError(t,"void variable cannot be operand");
-          else if (lType != rType) typeError(t,"operands have different type");
+          else if (lType != rType) typeError(t,"invalid expression");
           else t->type = Integer;
           
           break;
