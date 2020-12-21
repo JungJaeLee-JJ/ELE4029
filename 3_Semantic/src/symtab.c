@@ -67,14 +67,27 @@ void st_insert( char * name, TreeNode * node, int lineno, int loc ){
 
   }
   /* 이미 선언된 경우 line number만 추가 */
-  else 
-  { LineList t = l->lines;
-    while (t->next != NULL) t = t->next;
-    t->next = (LineList) malloc(sizeof(struct LineListRec));
-    t->next->lineno = lineno;
-    t->next->next = NULL;
-  }
+  // else 
+  // { LineList t = l->lines;
+  //   while (t->next != NULL) t = t->next;
+  //   t->next = (LineList) malloc(sizeof(struct LineListRec));
+  //   t->next->lineno = lineno;
+  //   t->next->next = NULL;
+  // }
 } /* st_insert */
+
+
+void lineno_add ( char * name, int lineno )
+{ BucketList bl = bk_lookup(name);
+  LineList ll = bl->lines;
+  while(ll->next != NULL)
+    ll = ll->next;
+  ll->next = (LineList) malloc(sizeof(struct LineListRec));
+  ll->next->lineno = lineno;
+  ll->next->next = NULL;
+}
+
+
 
 /* Function st_lookup returns the memory 
  * location of a variable or -1 if not found
@@ -88,6 +101,18 @@ int st_lookup ( char * name ){
     if (l != NULL) return l->memloc;
     nowSC = nowSC -> parent;
   }
+  return -1; 
+}
+
+int st_lookup_top ( char * name ){ 
+  int h = hash(name);
+  ScopeList nowSC = now_scope();
+  // while (nowSC != NULL){
+    BucketList l =  nowSC->bucket[h];
+    while ((l != NULL) && (strcmp(name,l->name) != 0)) l = l->next;
+    if (l != NULL) return l->memloc;
+  // nowSC = nowSC -> parent;
+  // }
   return -1; 
 }
 
@@ -106,8 +131,7 @@ BucketList bk_lookup ( char * name ){
 // 스코프 스택에 추가
 void scope_add(ScopeList scope){
   stack[stack_idx] = scope;
-  stack_idx++;
-  loc[stack_idx] = 0;
+  loc[stack_idx++] = 0;
 }
 
 // 스코프 스택에서 제거

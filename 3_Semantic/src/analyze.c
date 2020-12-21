@@ -118,7 +118,7 @@ static void insertNode( TreeNode * t )
           /* 만약 선언되지 않은 경우 에러*/
           if (st_lookup(t->attr.name) == -1) undefinedError(t);
            /* 선언되었다면 line number만 추가 */
-          else st_insert(t->attr.name, t, t->lineno,-100);
+          else lineno_add(t->attr.name,t->lineno);
           break;
 
         default:
@@ -131,7 +131,7 @@ static void insertNode( TreeNode * t )
           function_name = t->attr.name;
 
           /* 현재 스코프에서 해당 이름이 이미 사용된 경우 */
-          if (st_lookup(t->attr.name) != -1) { 
+          if (st_lookup_top(t->attr.name) >= -1) { 
             redefinedError(t);
             break;
           }
