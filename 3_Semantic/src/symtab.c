@@ -236,10 +236,10 @@ void printSymTab(FILE * listing){
 
           /* 나머지 출력 */
           fprintf(listing,"%-15d",nowBK->memloc);
-          fprintf(listing,"%-15s",nowSC->name);
+          fprintf(listing,"%-13s",nowSC->name);
           LineList linelist = nowBK->lines;
           while(linelist != NULL){ 
-            fprintf(listing,"%15d",linelist->lineno);
+            fprintf(listing,"%2d",linelist->lineno);
             linelist = linelist->next;
           }
           fprintf(listing,"\n");
