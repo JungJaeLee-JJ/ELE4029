@@ -85,23 +85,25 @@ static void voidVarError(TreeNode * t, char * name)
   Error = TRUE;
 }
 
+
 /* Procedure insertNode inserts 
  * identifiers stored in t into 
  * the symbol table 
  */
 static void insertNode( TreeNode * t )
-{ switch (t->nodekind)
+{ 
+  switch (t->nodekind)
   { case StmtK:
       switch (t->kind.stmt)
-      { case CompK:
-          if (isInScope)
-            isInScope = FALSE;
-          else
-          { ScopeList scope = scope_create(function_name);
-            scope_add(scope);
-            location++;
-          }
-          t->scope = now_scope();
+      { 
+        case CompK:
+            if(isInScope) isInScope = FALSE;
+            else {
+              ScopeList scope = scope_create(function_name);
+              scope_add(scope);
+              location++;
+            }
+            t->scope = now_scope();
           break;
         default:
           break;
@@ -109,17 +111,16 @@ static void insertNode( TreeNode * t )
       break;
     case ExpK:
       switch (t->kind.exp)
-      { case IdK:
+      { 
+        case IdK:
         case ArrIdK:
         case CallK:
-          /* not yet in table, undefined error */
-          if (st_lookup(t->attr.name) == -1)
-            undefinedError(t);
-          /* already in table, so ignore location, 
-             add line number of use only */ 
-          else
-            st_add_lineno(t->attr.name, t->lineno);
+          /* 만약 선언되지 않은 경우 에러*/
+          if (st_lookup(t->attr.name) == -1) undefinedError(t);
+           /* 선언되었다면 line number만 추가 */
+          else lineno_add(t->attr.name,t->lineno);
           break;
+
         default:
           break;
       }
@@ -128,20 +129,27 @@ static void insertNode( TreeNode * t )
       switch (t->kind.decl)
       { case FunK:
           function_name = t->attr.name;
-          if (st_lookup_top(t->attr.name) >= 0)
-          { redefinedError(t);
-            break;
-          }
-          if (now_scope() != globalSC)
-          { funcDeclNotGlobal(t);
-            break;
-          }
-          st_insert(function_name, t, t->lineno, loc_add());
-          scope_add(scope_create(function_name));
-          isInScope = TRUE;
 
+          /* 현재 스코프에서 해당 이름이 이미 사용된 경우 */
+          if (st_lookup_top(t->attr.name) >= 0) { 
+            redefinedError(t);
+            break;
+          }
+
+          /* 함수를 선언하였는데, 현재 스코프가 글로벌 스코프가 아닌 경우 */
+          if (now_scope() != globalSC){ 
+            funcDeclNotGlobal(t);
+            break;
+          }
+
+          st_insert(function_name, t, t->lineno, loc_add());   
+          ScopeList tmp = scope_create(function_name);
+          scope_add(tmp); 
+          isInScope = TRUE;
+          
           switch (t->child[0]->attr.type)
-          { case INT:
+          { 
+            case INT:
               t->type = Integer;
               break;
             case VOID:
@@ -162,11 +170,8 @@ static void insertNode( TreeNode * t )
               t->type = ArrayInteger;
             }
             
-            if (st_lookup_top(name) < 0){
-              st_insert(name, t, t->lineno, loc_add());
-            }
-            else 
-              redefinedError(t);
+            if (st_lookup(name) < 0) st_insert(name, t, t->lineno, loc_add());    
+            else redefinedError(t);
           }
           break;
         default:
@@ -174,16 +179,13 @@ static void insertNode( TreeNode * t )
       }
       break;
     case ParamK:
-        if (t->child[0]->attr.type == VOID)
-        { break;
-        }
+        if (t->child[0]->attr.type == VOID) break;
+        
+        if (st_lookup(t->attr.name) == -1){ 
+          st_insert(t->attr.name, t, t->lineno, loc_add());    
 
-        if (st_lookup(t->attr.name) == -1)
-        { st_insert(t->attr.name, t, t->lineno, loc_add());
-          if(t->kind.param == SingleParamK)
-            t->type = Integer;
-          else
-            t->type = ArrayInteger;
+          if(t->kind.param == SingleParamK) t->type = Integer;
+          else t->type = ArrayInteger;
         }
         break;
     default:
