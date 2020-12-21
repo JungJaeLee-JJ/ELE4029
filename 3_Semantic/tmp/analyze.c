@@ -431,6 +431,32 @@ static void checkNode(TreeNode * t)
   }
 }
 
+static void beforeCheckNode(TreeNode * t)
+{ switch (t->nodekind)
+  { case DeclK:
+      switch (t->kind.decl)
+      { case FuncK:
+          funcName = t->attr.name;
+          break;
+        default:
+          break;
+      }
+      break;
+    case StmtK:
+      switch (t->kind.stmt)
+      { case CompK:
+          sc_push(t->attr.scope);
+          break;
+        default:
+          break;
+      }
+      break;
+    default:
+      break;
+  }
+}
+
+
 /* Procedure typeCheck performs type checking 
  * by a postorder syntax tree traversal
  */
