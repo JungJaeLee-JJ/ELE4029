@@ -158,7 +158,7 @@ void printSymTab(FILE * listing)
   fprintf(listing,"\n");
   print_Function_and_GlobalVariables(listing);
   fprintf(listing,"\n");
-  print_FuncP_N_LoclVar(listing);
+  print_FunctionParameter_and_LocalVariables (listing);
 } /* printSymTab */
 
 void print_SymTab(FILE * listing)
