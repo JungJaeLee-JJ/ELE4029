@@ -371,8 +371,8 @@ void print_Function_and_GlobalVariables(FILE * listing){
   int sc_idx,bk_idx;
 
   fprintf(listing,"< Function and Global Variables >\n");
-  fprintf(listing,"ID Name        ID Type    Data Type \n");
-  fprintf(listing,"-------------  ---------  -----------\n");
+  fprintf(listing,"ID Name        ID Type        Data Type \n");
+  fprintf(listing,"-------------  -------------  -------------\n");
 
   for(sc_idx = 0; sc_idx < scope_idx; sc_idx++){
 
@@ -399,35 +399,35 @@ void print_Function_and_GlobalVariables(FILE * listing){
               switch (node->kind.decl)
               { 
                 case FunK:
-                  fprintf(listing,"%-11s","Function");
+                  fprintf(listing,"%-15s","Function");
                   switch (node->type)
                   { 
                     case Void:
-                      fprintf(listing,"%-11s","Void");
+                      fprintf(listing,"%-15s","Void");
                       break;
                     case Integer:
-                      fprintf(listing,"%-11s","Integer");
+                      fprintf(listing,"%-15s","Integer");
                       break;
                     default:
                       break;
                   }
                   break;
                 case VarK:
-                  fprintf(listing,"%-11s","Variable");
+                  fprintf(listing,"%-15s","Variable");
                   switch (node->type)
                   { 
                     case Void:
-                      fprintf(listing,"%-11s","Void");
+                      fprintf(listing,"%-15s","Void");
                       break;
                     case Integer:
-                      fprintf(listing,"%-11s","Integer");
+                      fprintf(listing,"%-15s","Integer");
                       break;
                     default:
                       break;
                   }
                   break;
                 case ArrVarK:
-                  fprintf(listing,"%-11s","Variable");
+                  fprintf(listing,"%-15s","Variable");
                   fprintf(listing,"%-15s","ArrayInteger");
                   break;
                 default:
@@ -451,8 +451,8 @@ void print_FunctionParameter_and_LocalVariables (FILE * listing){
   int sc_idx,bk_idx;
 
   fprintf(listing,"< Function Parameter and Local Variables >\n");
-  fprintf(listing,"Scope Name      Nested Level  ID Name        Data Type \n");
-  fprintf(listing,"--------------  ------------  -------------  -----------\n");
+  fprintf(listing,"Scope Name     Nested Level   ID Name        Data Type \n");
+  fprintf(listing,"-------------  -------------  -------------  -------------\n");
 
 
   for(sc_idx = 0; sc_idx < scope_idx; sc_idx++){
@@ -481,8 +481,8 @@ void print_FunctionParameter_and_LocalVariables (FILE * listing){
             case DeclK:
 
               no_param = 0;
-              fprintf(listing,"%-16s",nowSC->name);
-              fprintf(listing,"%-14d",nowSC->depth);
+              fprintf(listing,"%-15s",nowSC->name);
+              fprintf(listing,"%-15d",nowSC->depth);
 
               switch (node->kind.decl)
               { 
@@ -491,11 +491,11 @@ void print_FunctionParameter_and_LocalVariables (FILE * listing){
                   { 
                     case Void:
                       fprintf(listing,"%-15s",node->attr.name);
-                      fprintf(listing,"%-11s","Void");
+                      fprintf(listing,"%-15s","Void");
                       break;
                     case Integer:
                       fprintf(listing,"%-15s",node->attr.name);
-                      fprintf(listing,"%-11s","Integer");
+                      fprintf(listing,"%-15s","Integer");
                       break;
                     default:
                       break;
@@ -503,7 +503,7 @@ void print_FunctionParameter_and_LocalVariables (FILE * listing){
                   break;
                 case ArrVarK:
                   fprintf(listing,"%-15s",node->attr.arr.name);
-                  fprintf(listing,"%-11s","ArrayInteger");
+                  fprintf(listing,"%-15s","ArrayInteger");
                   break;
                 default:
                   break;
@@ -512,16 +512,16 @@ void print_FunctionParameter_and_LocalVariables (FILE * listing){
               break;              
             case ParamK:
               no_param = 0;
-              fprintf(listing,"%-16s",nowSC->name);
-              fprintf(listing,"%-14d",nowSC->depth);
+              fprintf(listing,"%-15s",nowSC->name);
+              fprintf(listing,"%-15d",nowSC->depth);
               switch (node->kind.param)
               { case ArrParamK:
                   fprintf(listing,"%-15s",node->attr.name);
-                  fprintf(listing,"%-11s","ArrayInteger");
+                  fprintf(listing,"%-15s","ArrayInteger");
                   break;
                 case SingleParamK:
                   fprintf(listing,"%-15s",node->attr.name);
-                  fprintf(listing,"%-11s","Integer");
+                  fprintf(listing,"%-15s","Integer");
                   break;
                 default:
                   break;
