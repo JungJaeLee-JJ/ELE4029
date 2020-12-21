@@ -118,7 +118,7 @@ static void insertNode( TreeNode * t )
           /* 만약 선언되지 않은 경우 에러*/
           if (st_lookup(t->attr.name) == -1) undefinedError(t);
            /* 선언되었다면 line number만 추가 */
-          else lineno_add(t->attr.name,t->lineno);
+          else st_add_lineno(t->attr.name,t->lineno);
           break;
 
         default:
