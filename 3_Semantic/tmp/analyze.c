@@ -42,10 +42,10 @@ static void traverse( TreeNode * t,
   }
 }
 
-static void typeError(TreeNode * t, char * message)
-{ fprintf(listing,"Error: Type error at line %d: %s\n",t->lineno,message);
-  Error = TRUE;
-}
+/* nullProc is a do-nothing procedure to 
+ * generate preorder-only or postorder-only
+ * traversals from traverse
+ */
 static void nullProc(TreeNode * t)
 { if (t==NULL) return;
   else return;
@@ -80,8 +80,8 @@ static void funcDeclNotGlobal(TreeNode * t){
   Error = TRUE;
 }
 
-static void voidVarError(TreeNode * t, char * name){ 
-  fprintf(listing,"Error: Variable Type cannot be Void at line %d (name : %s)\n",t->lineno,name);
+static void voidVarError(TreeNode * t, char * name)
+{ fprintf(listing,"Error: Variable Type cannot be Void at line %d (name : %s)\n",t->lineno,name);
   Error = TRUE;
 }
 
