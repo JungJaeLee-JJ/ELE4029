@@ -198,54 +198,60 @@ void buildSymtab(TreeNode * syntaxTree)
 { globalScope = sc_create("global");
   scope_add(globalScope);
 
-  TreeNode * func;
-  TreeNode * typeSpec;
-  TreeNode * param;
-  TreeNode * compStmt;
 
-  /* input Function */
-  func = newDeclNode(FunK);
+  TreeNode * function;
+  TreeNode * type;
+  TreeNode * parameter;
+  TreeNode * parameter_child;
+  TreeNode * comp;
 
-  typeSpec = newTypeNode(FunK);
-  typeSpec->attr.type = INT;
-  func->type = Integer;
+  /* input() */
+  function = newDeclNode(FunK);
+  type = newDeclNode(TypeK);
+  comp = newStmtNode(CompK);
+  type->attr.type = INT;
 
-  compStmt = newStmtNode(CompK);
-  compStmt->child[0] = NULL;  // no local variable
-  compStmt->child[1] = NULL;  // no statement
 
-  func->lineno = 0;
-  func->attr.name = "input";
-  func->child[0] = typeSpec;
-  func->child[1] = NULL;      // no parameter
-  func->child[2] = compStmt;
+  comp->child[0] = NULL;
+  comp->child[1] = NULL;
 
-  st_insert("input",func, 0, addLocation());
-  
-  /* output Function */
-  func = newDeclNode(FunK);
+  function->type = Integer;
+  function->lineno = 0;
+  function->attr.name = "input";
+  function->child[0] = type;
+  function->child[1] = NULL;
+  function->child[2] = comp; 
 
-  typeSpec = newTypeNode(FunK);
-  typeSpec->attr.type = VOID;
-  func->type = Void;
 
-  param = newParamNode(SingleParamK);   // single integer parameter
-  param->attr.name = "arg";
-  param->type = Integer;
-  param->child[0] = newTypeNode(FunK);
-  param->child[0]->attr.type = INT;
 
-  compStmt = newStmtNode(CompK);
-  compStmt->child[0] = NULL;  // no local variable
-  compStmt->child[1] = NULL;  // no statement
+  st_insert("input",function,0,loc_add());
 
-  func->lineno = 0;
-  func->attr.name = "output";
-  func->child[0] = typeSpec;
-  func->child[1] = param;
-  func->child[2] = compStmt;
 
-  st_insert("output",func, 0, addLocation());
+
+  /* output() */
+  function = newDeclNode(FunK);
+  type = newDeclNode(TypeK);
+  parameter = newParamNode(SingleParamK);
+  parameter_child = newDeclNode(TypeK);
+  comp = newStmtNode(CompK);
+  type->attr.type = VOID;
+
+  parameter->attr.name = "arg";
+  parameter->type = Integer;
+  parameter_child->attr.type = INT;
+  parameter->child[0] = parameter_child;
+
+  comp->child[0] = NULL;
+  comp->child[1] = NULL;
+
+  function->type = Void;
+  function->lineno = 0;
+  function->attr.name = "output";
+  function->child[0] = type;
+  function->child[1] = parameter;
+  function->child[2] = comp; 
+
+  st_insert("output",function,0,loc_add());
 
 
   traverse(syntaxTree, insertNode, afterInsertNode);
