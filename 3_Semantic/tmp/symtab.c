@@ -155,7 +155,7 @@ void scope_add ( ScopeList scope )
 
 
 
-int addLocation ( void )
+int loc_add ( void )
 { return loc_arr[stack_idx - 1]++;
 }
 

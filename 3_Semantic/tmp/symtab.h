@@ -63,7 +63,7 @@ void scope_sub ( void );
 void scope_add ( ScopeList scope );
 // void scope_sub ( void );
 // void scope_add ( ScopeList scope );
-int addLocation ( void );
+int loc_add ( void );
 
 /* Procedure printSymTab prints a formatted 
  * listing of the symbol table contents 

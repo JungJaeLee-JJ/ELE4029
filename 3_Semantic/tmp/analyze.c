@@ -13,7 +13,7 @@
 
 /* counter for variable memory locations */
 static int location = 0;
-static ScopeList globalScope = NULL;
+static ScopeList globalSC = NULL;
 static char * funcName;
 static int inScopeBefore = FALSE;
 
@@ -127,11 +127,11 @@ static void insertNode( TreeNode * t )
           { redefinedError(t);
             break;
           }
-          if (sc_top() != globalScope)
+          if (sc_top() != globalSC)
           { funcDeclNotGlobal(t);
             break;
           }
-          st_insert(funcName, t, t->lineno, addLocation());
+          st_insert(funcName, t, t->lineno, loc_add());
           scope_add(sc_create(funcName));
           inScopeBefore = TRUE;
 
@@ -158,7 +158,7 @@ static void insertNode( TreeNode * t )
             }
             
             if (st_lookup_top(name) < 0){
-              st_insert(name, t, t->lineno, addLocation());
+              st_insert(name, t, t->lineno, loc_add());
             }
             else 
               redefinedError(t);
@@ -174,7 +174,7 @@ static void insertNode( TreeNode * t )
         }
 
         if (st_lookup(t->attr.name) == -1)
-        { st_insert(t->attr.name, t, t->lineno, addLocation());
+        { st_insert(t->attr.name, t, t->lineno, loc_add());
           if(t->kind.param == SingleParamK)
             t->type = Integer;
           else
@@ -194,10 +194,13 @@ static void afterInsertNode(TreeNode * t)
 /* Function buildSymtab constructs the symbol 
  * table by preorder traversal of the syntax tree
  */
-void buildSymtab(TreeNode * syntaxTree)
-{ globalScope = sc_create("global");
-  scope_add(globalScope);
+void buildSymtab(TreeNode * syntaxTree){ 
 
+  /* 12.12 global scope 생성  */
+
+
+  globalSC = scope_create("global");
+  scope_add(globalSC);
 
   TreeNode * function;
   TreeNode * type;
@@ -224,7 +227,7 @@ void buildSymtab(TreeNode * syntaxTree)
 
 
 
-  st_insert("input",function,0,addLocation());
+  st_insert("input",function,0,loc_add());
 
 
 
@@ -251,11 +254,11 @@ void buildSymtab(TreeNode * syntaxTree)
   function->child[1] = parameter;
   function->child[2] = comp; 
 
-  st_insert("output",function,0,addLocation());
+  st_insert("output",function,0,loc_add());
 
 
-  traverse(syntaxTree, insertNode, afterInsertNode);
-  scope_sub();   // pop global scope
+  traverse(syntaxTree,insertNode,backToParent);
+  scope_sub();
 }
 
 static void beforeCheckNode(TreeNode * t)
@@ -449,7 +452,7 @@ static void checkNode(TreeNode * t)
  * by a postorder syntax tree traversal
  */
 void typeCheck(TreeNode * syntaxTree)
-{ scope_add(globalScope);
+{ scope_add(globalSC);
   traverse(syntaxTree,beforeCheckNode,checkNode);
   scope_sub();
 }
